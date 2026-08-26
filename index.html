@@ -2,613 +2,218 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-
-<meta name="viewport"
-      content="width=192,height=96,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
-
-<title>Puducherry Weather 192x96</title>
-
+<meta name="viewport" content="width=96,height=192,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Puducherry Smart Billboard</title>
 <style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:96px;height:192px;overflow:hidden;background:#000}
+body{font-family:Arial,Helvetica,sans-serif}
+#flip{position:relative;width:96px;height:192px;perspective:600px;transform-style:preserve-3d}
+.page{position:absolute;inset:0;width:96px;height:192px;overflow:hidden;backface-visibility:hidden;transition:transform 1s cubic-bezier(.2,.75,.2,1),filter 1s;transform-style:preserve-3d;background:#000;color:#fff}
+.weather{transform:rotateY(0);z-index:3}.clock{transform:rotateY(180deg);z-index:2}.awareness{transform:rotateY(180deg);z-index:1}
+#flip.clockOn .weather{transform:rotateY(-180deg);z-index:1}
+#flip.clockOn .clock{transform:rotateY(0);z-index:3}
+#flip.clockOn .awareness{transform:rotateY(180deg);z-index:1}
+#flip.awarenessOn .weather{transform:rotateY(-360deg);z-index:1}
+#flip.awarenessOn .clock{transform:rotateY(-180deg);z-index:1}
+#flip.awarenessOn .awareness{transform:rotateY(0);z-index:3}
+
+.page:before{
+ content:"";position:absolute;inset:0;pointer-events:none;z-index:50;
+ background:repeating-linear-gradient(0deg,rgba(255,255,255,.04) 0 1px,transparent 1px 3px);
 }
-
-html{
-    width:192px;
-    height:96px;
-    overflow:hidden;
-}
-
-body{
-    width:192px;
-    height:96px;
-    overflow:hidden;
-    background:#000;
-}
-
-/* EXACT BILLBOARD SIZE */
-#board{
-    position:relative;
-
-    width:192px;
-    height:96px;
-
-    overflow:hidden;
-
-    background:
-        radial-gradient(
-            circle at 50% 45%,
-            #142500 0%,
-            #061000 45%,
-            #000000 100%
-        );
-
-    color:#bfff30;
-
-    font-family:Arial,Helvetica,sans-serif;
-
-    border:1px solid #7cff00;
-
-    box-shadow:
-        inset 0 0 8px #5cff00,
-        0 0 6px #5cff00;
-}
-
-
-/* SCAN LINE EFFECT */
-#board:after{
-    content:"";
-    position:absolute;
-
-    left:0;
-    top:0;
-
-    width:192px;
-    height:96px;
-
-    pointer-events:none;
-
-    background:
-        repeating-linear-gradient(
-            to bottom,
-            rgba(255,255,255,.04) 0px,
-            rgba(255,255,255,.04) 1px,
-            transparent 1px,
-            transparent 3px
-        );
-
-    z-index:50;
-}
-
-
-/* HEADER */
-
-.header{
-    position:absolute;
-
-    left:0;
-    top:0;
-
-    width:192px;
-    height:17px;
-
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-
-    padding:0 5px;
-
-    background:#071000;
-
-    border-bottom:1px solid #4d8000;
-}
-
-.city{
-    font-size:9px;
-    font-weight:bold;
-    letter-spacing:.7px;
-
-    text-shadow:0 0 5px #9cff00;
-}
-
-.live{
-    display:flex;
-    align-items:center;
-
-    gap:3px;
-
-    color:white;
-
-    font-size:6px;
-    font-weight:bold;
-}
-
-.live-dot{
-    width:4px;
-    height:4px;
-
-    border-radius:50%;
-
-    background:red;
-
-    box-shadow:0 0 5px red;
-
-    animation:blink 1s infinite;
-}
-
-@keyframes blink{
-    0%,45%{opacity:1}
-    50%,100%{opacity:.2}
-}
-
-
-/* MAIN */
-
-.main{
-    position:absolute;
-
-    left:0;
-    top:18px;
-
-    width:192px;
-    height:53px;
-
-    display:flex;
-    align-items:center;
-}
-
-
-/* TEMPERATURE */
-
-.temperature{
-    width:82px;
-
-    text-align:center;
-
-    font-size:32px;
-    line-height:32px;
-
-    font-weight:bold;
-
-    color:#caff35;
-
-    text-shadow:
-        0 0 4px #9cff00,
-        0 0 8px #4cff00;
-
-    animation:glow 2s infinite alternate;
-}
-
-.degree{
-    font-size:12px;
-    vertical-align:top;
-}
-
-@keyframes glow{
-    from{
-        opacity:.8;
-    }
-    to{
-        opacity:1;
-        text-shadow:
-            0 0 5px #9cff00,
-            0 0 12px #5cff00;
-    }
-}
-
-
-/* WEATHER */
-
-.weather{
-    width:110px;
-    height:53px;
-
-    display:flex;
-    align-items:center;
-
-    gap:4px;
-}
-
-.icon{
-    width:40px;
-
-    text-align:center;
-
-    font-size:27px;
-
-    animation:float 2s ease-in-out infinite;
-}
-
-@keyframes float{
-    0%,100%{
-        transform:translateY(0);
-    }
-
-    50%{
-        transform:translateY(-3px);
-    }
-}
-
-.details{
-    width:66px;
-}
-
-.description{
-    color:white;
-
-    font-size:7px;
-
-    font-weight:bold;
-
-    white-space:nowrap;
-
-    overflow:hidden;
-}
-
-.info{
-    font-size:6px;
-
-    line-height:10px;
-
-    color:#9bb87a;
-}
-
-.value{
-    color:#caff35;
-
-    font-weight:bold;
-}
-
-
-/* STATUS BAR */
-
-.status{
-    position:absolute;
-
-    left:0;
-    top:71px;
-
-    width:192px;
-    height:12px;
-
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-
-    padding:0 5px;
-
-    background:#050900;
-
-    border-top:1px solid #355f00;
-
-    font-size:6px;
-}
-
-.auto{
-    color:#8aa86a;
-}
-
-.time{
-    color:#caff35;
-}
-
-
-/* TICKER */
-
-.ticker{
-    position:absolute;
-
-    left:0;
-    bottom:0;
-
-    width:192px;
-    height:13px;
-
-    overflow:hidden;
-
-    background:#091400;
-
-    border-top:1px solid #548c00;
-
-    line-height:12px;
-
-    white-space:nowrap;
-
-    font-size:7px;
-}
-
-.ticker-text{
-    display:inline-block;
-
-    padding-left:192px;
-
-    animation:
-        scroll 12s linear infinite;
-}
-
-@keyframes scroll{
-
-    0%{
-        transform:translateX(0);
-    }
-
-    100%{
-        transform:translateX(-100%);
-    }
-
-}
+.frame{position:absolute;inset:3px;border:1px solid #5b8d32;box-shadow:inset 0 0 7px rgba(100,255,30,.15)}
+.frame:before,.frame:after{content:"";position:absolute;width:8px;height:8px;border-color:#9dff32;border-style:solid}
+.frame:before{left:-1px;top:-1px;border-width:2px 0 0 2px}.frame:after{right:-1px;bottom:-1px;border-width:0 2px 2px 0}
+
+/* WEATHER PAGE */
+.weather{background:radial-gradient(circle at 50% 35%,#0a1907,#000 65%)}
+.whead{position:absolute;top:7px;left:5px;width:86px;text-align:center;font-size:7px;font-weight:900;letter-spacing:.8px;color:#fff}
+.wsub{position:absolute;top:18px;left:0;width:96px;text-align:center;font-size:4px;color:#92ff31;letter-spacing:.6px}
+.live{position:absolute;right:5px;top:7px;font-size:4px;color:#baff62}
+.dot{display:inline-block;width:3px;height:3px;border-radius:50%;background:#ff3b25;box-shadow:0 0 4px red;animation:blink 1s infinite}
+@keyframes blink{50%{opacity:.15}}
+.dots{position:absolute;top:26px;left:8px;width:80px;display:flex;justify-content:space-between}
+.dots i{width:2px;height:2px;border-radius:50%;background:#aaff2e;animation:pulse 1.5s infinite alternate}
+@keyframes pulse{to{opacity:1;box-shadow:0 0 4px #8cff00}from{opacity:.2}}
+.temp{position:absolute;top:34px;width:96px;text-align:center;font:900 34px/36px Arial;color:#baff20;letter-spacing:-2px;text-shadow:0 0 5px #baff20,0 0 12px #49ff00;animation:glow 2s infinite alternate}
+.temp small{font-size:10px;vertical-align:top;letter-spacing:0}
+@keyframes glow{to{text-shadow:0 0 8px #d5ff70,0 0 16px #42ff00}}
+.icon{position:absolute;top:75px;left:0;width:96px;text-align:center;font-size:27px;animation:float 2s ease-in-out infinite}
+@keyframes float{50%{transform:translateY(-3px)}}
+.desc{position:absolute;top:107px;width:96px;text-align:center;font-size:7px;font-weight:bold;color:#fff;text-shadow:0 0 4px #fff}
+.cards{position:absolute;top:118px;left:5px;width:86px}
+.card{height:12px;margin-bottom:2px;border:1px solid #315b22;background:#050b04;display:flex;align-items:center;padding:0 3px}
+.card b{width:11px;color:#72e8ff;font-size:7px}.card label{flex:1;font-size:4.5px;color:#dbe5d7}.card strong{font-size:6.5px;color:#baff22}.card em{font-style:normal;font-size:4px;color:#baff22;margin-left:2px}
+.wticker,.aticker{position:absolute;bottom:0;left:0;width:96px;height:15px;overflow:hidden;background:#050c03;border-top:1px solid #68a82d;z-index:20;white-space:nowrap}
+.track{display:flex;width:max-content;height:15px;align-items:center;animation:scroll 8s linear infinite}
+.track span{width:96px;flex:none;text-align:center;font-size:4.8px;line-height:15px;color:#caff54;font-weight:bold}
+@keyframes scroll{to{transform:translateX(-96px)}}
+
+/* CLOCK PAGE */
+.clock{background:radial-gradient(circle at 50% 45%,#0b1607,#000 67%)}
+.chead{position:absolute;top:10px;width:96px;text-align:center;font-size:8px;font-weight:900;letter-spacing:1px;color:#fff}
+.csub{position:absolute;top:22px;width:96px;text-align:center;font-size:4px;color:#9dff31;letter-spacing:.7px}
+.today{position:absolute;top:36px;width:96px;text-align:center;font-size:5px;color:#879b83;letter-spacing:1.5px}
+.date{position:absolute;top:44px;width:96px;text-align:center;color:#baff22;font:900 28px/28px Arial;text-shadow:0 0 6px #baff22,0 0 12px #4cff00}
+.date small{font-size:8px;vertical-align:top}
+.day{position:absolute;top:75px;width:96px;text-align:center;font-size:6px;font-weight:bold;letter-spacing:1px}
+.digital{position:absolute;top:89px;width:96px;text-align:center;font:900 21px/25px "Courier New",monospace;color:#dfffaa;letter-spacing:1px;text-shadow:0 0 6px #baff35,0 0 12px #4cff00;animation:dg 2s infinite alternate}
+@keyframes dg{to{opacity:.95;text-shadow:0 0 8px #dfff80,0 0 16px #4cff00}}
+.secbar{position:absolute;top:119px;left:10px;width:76px;height:3px;border:1px solid #355c24;background:#020502}
+.secbar div{height:100%;background:#baff22;box-shadow:0 0 4px #8cff00}
+.ist{position:absolute;top:127px;width:96px;text-align:center;font-size:4px;color:#748974;letter-spacing:.8px}
+.clockMsg{position:absolute;top:140px;left:8px;width:80px;text-align:center;color:#aaff42;font-size:6px;font-weight:bold;line-height:9px}
+.clockMsg strong{display:block;color:#fff;font-size:7px;margin-bottom:3px}
+
+/* AWARENESS PAGE */
+.awareness{background:radial-gradient(circle at 50% 35%,#171000,#000 68%)}
+.ahead{position:absolute;top:9px;width:96px;text-align:center;font-size:8px;font-weight:900;letter-spacing:1px;color:#fff}
+.asub{position:absolute;top:21px;width:96px;text-align:center;font-size:4px;color:#ffc934;letter-spacing:.6px}
+.awIcon{position:absolute;top:31px;width:96px;text-align:center;font-size:26px;animation:awpulse 1.8s infinite}
+@keyframes awpulse{50%{transform:scale(1.1)}}
+.awTitle{position:absolute;top:63px;width:96px;text-align:center;font-size:8px;font-weight:900;color:#ffd03d;text-shadow:0 0 6px #ff9d00}
+.awMessage{position:absolute;top:76px;left:6px;width:84px;min-height:21px;padding:4px;text-align:center;display:flex;align-items:center;justify-content:center;border:1px solid #876320;background:#120d02;color:#fff;font-size:7.5px;font-weight:900;line-height:9px}
+.rules{position:absolute;top:103px;left:7px;width:82px}
+.rule{height:13px;display:flex;align-items:center;border-bottom:1px solid #3c2e12;font-size:4.7px;font-weight:bold;color:#e5e9e2}
+.rule b{width:13px;color:#ffd03d;font-family:"Courier New",monospace}
+.awBottom{position:absolute;left:7px;right:7px;bottom:24px;height:10px;border-top:1px solid #5b451a;display:flex;justify-content:space-between;align-items:center;color:#ffc83a;font-size:4.5px;font-weight:bold}
 </style>
 </head>
-
-
 <body>
 
-<div id="board">
+<div id="flip">
 
-    <!-- HEADER -->
+<!-- PAGE 1 WEATHER -->
+<section class="page weather">
+<div class="frame"></div>
+<div class="whead">PUDUCHERRY WEATHER</div><div class="live"><span class="dot"></span> LIVE</div>
+<div class="wsub">REAL-TIME WEATHER • AUTO UPDATE</div>
+<div class="dots"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+<div class="temp"><span id="temp">--</span><small>°C</small></div>
+<div class="icon" id="icon">⛅</div>
+<div class="desc" id="desc">LOADING WEATHER</div>
+<div class="cards">
+  <div class="card"><b>♢</b><label>HUMIDITY</label><strong id="hum">--</strong><em>%</em></div>
+  <div class="card"><b>≋</b><label>WIND SPEED</label><strong id="wind">--</strong><em>km/h</em></div>
+  <div class="card"><b>♨</b><label>FEELS LIKE</label><strong id="feels">--</strong><em>°C</em></div>
+</div>
+<div class="wticker"><div class="track"><span id="wt1">» PUDUCHERRY WEATHER LIVE • UPDATING »</span><span id="wt2">» PUDUCHERRY WEATHER LIVE • UPDATING »</span></div></div>
+</section>
 
-    <div class="header">
+<!-- PAGE 2 CLOCK -->
+<section class="page clock">
+<div class="frame"></div>
+<div class="chead">PUDUCHERRY</div><div class="csub"> •ICCC</div>
+<div class="today">TODAY</div>
+<div class="date"><span id="day">--</span> <small id="month">---</small></div>
+<div class="day" id="weekday">---</div>
+<div class="digital" id="clock">00:00:00</div>
+<div class="secbar"><div id="secFill"></div></div>
+<div class="ist">INDIA STANDARD TIME • 24 HOUR</div>
+<div class="clockMsg"><strong>GOOD DAY • PUDUCHERRY</strong>TIME • DATE • CITY INFORMATION</div>
+<div class="aticker"><div class="track"><span>» PUDUCHERRY • DIGITAL TIME • DATE • LIVE »</span><span>» PUDUCHERRY • DIGITAL TIME • DATE • LIVE »</span></div></div>
+</section>
 
-        <div class="city">
-            PUDUCHERRY
-        </div>
+<!-- PAGE 3 PUBLIC AWARENESS -->
+<section class="page awareness">
+<div class="frame"></div>
+<div class="ahead">PUDUCHERRY</div>
+<div class="asub">PUBLIC AWARENESS • SMART CITY</div>
+<div class="awIcon" id="awIcon">🚦</div>
+<div class="awTitle" id="awTitle">TRAFFIC SAFETY</div>
+<div class="awMessage" id="awMessage">FOLLOW TRAFFIC RULES</div>
 
-        <div class="live">
-            <span class="live-dot"></span>
-            LIVE
-        </div>
+<div class="rules">
+  <div class="rule"><b>01</b> WEAR HELMET / SEAT BELT</div>
+  <div class="rule"><b>02</b> STOP AT RED SIGNAL</div>
+  <div class="rule"><b>03</b> USE ZEBRA CROSSING</div>
+  <div class="rule"><b>04</b> DON'T USE PHONE WHILE DRIVING</div>
+  <div class="rule"><b>05</b> KEEP TOURIST PLACES CLEAN</div>
+</div>
 
-    </div>
+<div class="awBottom"><span>USE DUSTBIN</span><span>DRIVE SAFE</span></div>
 
-
-    <!-- MAIN WEATHER -->
-
-    <div class="main">
-
-        <div class="temperature">
-
-            <span id="temp">--</span>
-            <span class="degree">°C</span>
-
-        </div>
-
-
-        <div class="weather">
-
-            <div
-                id="icon"
-                class="icon">
-                ☀
-            </div>
-
-
-            <div class="details">
-
-                <div
-                    id="description"
-                    class="description">
-                    LOADING
-                </div>
-
-                <div class="info">
-                    HUM
-                    <span
-                        id="humidity"
-                        class="value">--</span>%
-                </div>
-
-                <div class="info">
-                    WIND
-                    <span
-                        id="wind"
-                        class="value">--</span>
-                    km/h
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- STATUS -->
-
-    <div class="status">
-
-        <div class="auto">
-            ICCC-PUDUCHERRY
-        </div>
-
-        <div
-            id="time"
-            class="time">
-            --:--
-        </div>
-
-    </div>
-
-
-    <!-- TICKER -->
-
-    <div class="ticker">
-
-        <div
-            id="tickerText"
-            class="ticker-text">
-
-            ★ PUDUCHERRY WEATHER LIVE ★ UPDATING ★
-
-        </div>
-
-    </div>
+<div class="aticker"><div class="track">
+<span>» KEEP PUDUCHERRY CLEAN • USE DUSTBIN • DRIVE SAFE »</span>
+<span>» KEEP PUDUCHERRY CLEAN • USE DUSTBIN • DRIVE SAFE »</span>
+</div></div>
+</section>
 
 </div>
 
-
 <script>
+const API='https://api.open-meteo.com/v1/forecast?latitude=11.94&longitude=79.81&current=temperature_2m,relative_humidity_2m,wind_speed_10m,apparent_temperature,weather_code&timezone=Asia%2FKolkata';
 
-const API =
-"https://api.open-meteo.com/v1/forecast" +
-"?latitude=11.94" +
-"&longitude=79.81" +
-"&current=" +
-"temperature_2m," +
-"relative_humidity_2m," +
-"wind_speed_10m," +
-"weather_code" +
-"&timezone=Asia%2FKolkata";
-
-
-function weatherInfo(code){
-
-    if(code === 0)
-        return ["CLEAR","☀"];
-
-    if(code === 1 || code === 2)
-        return ["PARTLY CLOUDY","⛅"];
-
-    if(code === 3)
-        return ["CLOUDY","☁"];
-
-    if(code >= 45 && code <= 48)
-        return ["FOG","🌫"];
-
-    if(code >= 51 && code <= 57)
-        return ["DRIZZLE","🌦"];
-
-    if(code >= 61 && code <= 67)
-        return ["RAIN","🌧"];
-
-    if(code >= 80 && code <= 82)
-        return ["SHOWERS","🌦"];
-
-    if(code >= 95)
-        return ["STORM","⛈"];
-
-    return ["WEATHER","☁"];
+function weatherText(c){
+ if(c===0)return['CLEAR SKY','☀️'];
+ if(c<=2)return['PARTLY CLOUDY','⛅'];
+ if(c===3)return['CLOUDY','☁️'];
+ if(c<=48)return['FOG','🌫️'];
+ if(c<=57)return['DRIZZLE','🌦️'];
+ if(c<=67)return['RAIN','🌧️'];
+ if(c<=82)return['SHOWERS','🌦️'];
+ return['THUNDERSTORM','⛈️'];
 }
-
 
 async function loadWeather(){
-
-    try{
-
-        const response =
-            await fetch(API + "&_=" + Date.now());
-
-        const data =
-            await response.json();
-
-        const current =
-            data.current;
-
-        const temp =
-            Math.round(current.temperature_2m);
-
-        const humidity =
-            Math.round(
-                current.relative_humidity_2m
-            );
-
-        const wind =
-            Math.round(
-                current.wind_speed_10m
-            );
-
-        const weather =
-            weatherInfo(
-                current.weather_code
-            );
-
-
-        document.getElementById("temp")
-            .textContent = temp;
-
-        document.getElementById("humidity")
-            .textContent = humidity;
-
-        document.getElementById("wind")
-            .textContent = wind;
-
-        document.getElementById("description")
-            .textContent = weather[0];
-
-        document.getElementById("icon")
-            .textContent = weather[1];
-
-
-        document.getElementById("tickerText")
-            .textContent =
-            "★ PUDUCHERRY WEATHER LIVE ★ " +
-            temp + "°C ★ " +
-            weather[0] + " ★ HUMIDITY " +
-            humidity + "% ★ WIND " +
-            wind + " km/h ★";
-
-    }
-
-    catch(error){
-
-        document.getElementById("description")
-            .textContent = "OFFLINE";
-
-        document.getElementById("tickerText")
-            .textContent =
-            "★ WEATHER UPDATE UNAVAILABLE ★ RETRYING ★";
-
-    }
-
+ try{
+  const r=await fetch(API+'&_='+Date.now());
+  const d=await r.json(),c=d.current,w=weatherText(c.weather_code);
+  const t=Math.round(c.temperature_2m),h=Math.round(c.relative_humidity_2m);
+  const wind=Math.round(c.wind_speed_10m),feels=Math.round(c.apparent_temperature);
+  document.getElementById('temp').textContent=t;
+  document.getElementById('hum').textContent=h;
+  document.getElementById('wind').textContent=wind;
+  document.getElementById('feels').textContent=feels;
+  document.getElementById('desc').textContent=w[0];
+  document.getElementById('icon').textContent=w[1];
+  const text='» PUDUCHERRY WEATHER • '+t+'°C • '+w[0]+' • HUM '+h+'% • WIND '+wind+' km/h »';
+  document.getElementById('wt1').textContent=text;
+  document.getElementById('wt2').textContent=text;
+ }catch(e){
+  document.getElementById('desc').textContent='DATA OFFLINE';
+ }
 }
-
-
-/* CLOCK */
 
 function updateClock(){
-
-    const now = new Date();
-
-    const time =
-        now.toLocaleTimeString(
-            "en-IN",
-            {
-                timeZone:"Asia/Kolkata",
-                hour:"2-digit",
-                minute:"2-digit",
-                hour12:true
-            }
-        );
-
-    document.getElementById("time")
-        .textContent = time;
+ const n=new Date();
+ const opt={timeZone:'Asia/Kolkata'};
+ document.getElementById('clock').textContent=n.toLocaleTimeString('en-GB',{...opt,hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
+ document.getElementById('day').textContent=n.toLocaleDateString('en-GB',{...opt,day:'2-digit'});
+ document.getElementById('month').textContent=n.toLocaleDateString('en-GB',{...opt,month:'short'}).toUpperCase();
+ document.getElementById('weekday').textContent=n.toLocaleDateString('en-GB',{...opt,weekday:'long'}).toUpperCase();
+ document.getElementById('secFill').style.width=((n.getSeconds()/59)*100)+'%';
 }
 
+const awareness=[
+ ['🚦','TRAFFIC SAFETY','FOLLOW TRAFFIC RULES'],
+ ['🪖','SAFETY FIRST','WEAR HELMET / SEAT BELT'],
+ ['🚶','PEDESTRIAN SAFETY','USE ZEBRA CROSSING'],
+ ['📵','DRIVE RESPONSIBLY',"DON'T USE PHONE WHILE DRIVING"],
+ ['🗑️','KEEP PUDUCHERRY CLEAN','USE DUSTBIN • DO NOT LITTER'],
+ ['🌿','CLEAN TOURIST PLACES','KEEP OUR CITY CLEAN']
+];
+let ai=0;
+function updateAwareness(){
+ const a=awareness[ai++%awareness.length];
+ document.getElementById('awIcon').textContent=a[0];
+ document.getElementById('awTitle').textContent=a[1];
+ document.getElementById('awMessage').textContent=a[2];
+}
 
-/* START */
-
-loadWeather();
-
-updateClock();
-
-
-/* UPDATE WEATHER EVERY 10 MINUTES */
-
-setInterval(
-    loadWeather,
-    600000
-);
-
-
-/* UPDATE CLOCK EVERY SECOND */
-
-setInterval(
-    updateClock,
-    1000
-);
-
+let page=0;
+function flip(){
+ page=(page+1)%3;
+ document.getElementById('flip').classList.remove('clockOn','awarenessOn');
+ if(page===1)document.getElementById('flip').classList.add('clockOn');
+ if(page===2)document.getElementById('flip').classList.add('awarenessOn');
+}
+loadWeather();updateClock();updateAwareness();
+setInterval(loadWeather,600000);
+setInterval(updateClock,1000);
+setInterval(updateAwareness,5000);
+setInterval(flip,8000);
 </script>
-
 </body>
 </html>
