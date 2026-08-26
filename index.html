@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=192,height=96,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+
+<title>Puducherry Weather 192x96</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html{
+    width:192px;
+    height:96px;
+    overflow:hidden;
+}
+
+body{
+    width:192px;
+    height:96px;
+    overflow:hidden;
+    background:#000;
+}
+
+/* EXACT BILLBOARD SIZE */
+#board{
+    position:relative;
+
+    width:192px;
+    height:96px;
+
+    overflow:hidden;
+
+    background:
+        radial-gradient(
+            circle at 50% 45%,
+            #142500 0%,
+            #061000 45%,
+            #000000 100%
+        );
+
+    color:#bfff30;
+
+    font-family:Arial,Helvetica,sans-serif;
+
+    border:1px solid #7cff00;
+
+    box-shadow:
+        inset 0 0 8px #5cff00,
+        0 0 6px #5cff00;
+}
+
+
+/* SCAN LINE EFFECT */
+#board:after{
+    content:"";
+    position:absolute;
+
+    left:0;
+    top:0;
+
+    width:192px;
+    height:96px;
+
+    pointer-events:none;
+
+    background:
+        repeating-linear-gradient(
+            to bottom,
+            rgba(255,255,255,.04) 0px,
+            rgba(255,255,255,.04) 1px,
+            transparent 1px,
+            transparent 3px
+        );
+
+    z-index:50;
+}
+
+
+/* HEADER */
+
+.header{
+    position:absolute;
+
+    left:0;
+    top:0;
+
+    width:192px;
+    height:17px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    padding:0 5px;
+
+    background:#071000;
+
+    border-bottom:1px solid #4d8000;
+}
+
+.city{
+    font-size:9px;
+    font-weight:bold;
+    letter-spacing:.7px;
+
+    text-shadow:0 0 5px #9cff00;
+}
+
+.live{
+    display:flex;
+    align-items:center;
+
+    gap:3px;
+
+    color:white;
+
+    font-size:6px;
+    font-weight:bold;
+}
+
+.live-dot{
+    width:4px;
+    height:4px;
+
+    border-radius:50%;
+
+    background:red;
+
+    box-shadow:0 0 5px red;
+
+    animation:blink 1s infinite;
+}
+
+@keyframes blink{
+    0%,45%{opacity:1}
+    50%,100%{opacity:.2}
+}
+
+
+/* MAIN */
+
+.main{
+    position:absolute;
+
+    left:0;
+    top:18px;
+
+    width:192px;
+    height:53px;
+
+    display:flex;
+    align-items:center;
+}
+
+
+/* TEMPERATURE */
+
+.temperature{
+    width:82px;
+
+    text-align:center;
+
+    font-size:32px;
+    line-height:32px;
+
+    font-weight:bold;
+
+    color:#caff35;
+
+    text-shadow:
+        0 0 4px #9cff00,
+        0 0 8px #4cff00;
+
+    animation:glow 2s infinite alternate;
+}
+
+.degree{
+    font-size:12px;
+    vertical-align:top;
+}
+
+@keyframes glow{
+    from{
+        opacity:.8;
+    }
+    to{
+        opacity:1;
+        text-shadow:
+            0 0 5px #9cff00,
+            0 0 12px #5cff00;
+    }
+}
+
+
+/* WEATHER */
+
+.weather{
+    width:110px;
+    height:53px;
+
+    display:flex;
+    align-items:center;
+
+    gap:4px;
+}
+
+.icon{
+    width:40px;
+
+    text-align:center;
+
+    font-size:27px;
+
+    animation:float 2s ease-in-out infinite;
+}
+
+@keyframes float{
+    0%,100%{
+        transform:translateY(0);
+    }
+
+    50%{
+        transform:translateY(-3px);
+    }
+}
+
+.details{
+    width:66px;
+}
+
+.description{
+    color:white;
+
+    font-size:7px;
+
+    font-weight:bold;
+
+    white-space:nowrap;
+
+    overflow:hidden;
+}
+
+.info{
+    font-size:6px;
+
+    line-height:10px;
+
+    color:#9bb87a;
+}
+
+.value{
+    color:#caff35;
+
+    font-weight:bold;
+}
+
+
+/* STATUS BAR */
+
+.status{
+    position:absolute;
+
+    left:0;
+    top:71px;
+
+    width:192px;
+    height:12px;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    padding:0 5px;
+
+    background:#050900;
+
+    border-top:1px solid #355f00;
+
+    font-size:6px;
+}
+
+.auto{
+    color:#8aa86a;
+}
+
+.time{
+    color:#caff35;
+}
+
+
+/* TICKER */
+
+.ticker{
+    position:absolute;
+
+    left:0;
+    bottom:0;
+
+    width:192px;
+    height:13px;
+
+    overflow:hidden;
+
+    background:#091400;
+
+    border-top:1px solid #548c00;
+
+    line-height:12px;
+
+    white-space:nowrap;
+
+    font-size:7px;
+}
+
+.ticker-text{
+    display:inline-block;
+
+    padding-left:192px;
+
+    animation:
+        scroll 12s linear infinite;
+}
+
+@keyframes scroll{
+
+    0%{
+        transform:translateX(0);
+    }
+
+    100%{
+        transform:translateX(-100%);
+    }
+
+}
+</style>
+</head>
+
+
+<body>
+
+<div id="board">
+
+    <!-- HEADER -->
+
+    <div class="header">
+
+        <div class="city">
+            PUDUCHERRY
+        </div>
+
+        <div class="live">
+            <span class="live-dot"></span>
+            LIVE
+        </div>
+
+    </div>
+
+
+    <!-- MAIN WEATHER -->
+
+    <div class="main">
+
+        <div class="temperature">
+
+            <span id="temp">--</span>
+            <span class="degree">°C</span>
+
+        </div>
+
+
+        <div class="weather">
+
+            <div
+                id="icon"
+                class="icon">
+                ☀
+            </div>
+
+
+            <div class="details">
+
+                <div
+                    id="description"
+                    class="description">
+                    LOADING
+                </div>
+
+                <div class="info">
+                    HUM
+                    <span
+                        id="humidity"
+                        class="value">--</span>%
+                </div>
+
+                <div class="info">
+                    WIND
+                    <span
+                        id="wind"
+                        class="value">--</span>
+                    km/h
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- STATUS -->
+
+    <div class="status">
+
+        <div class="auto">
+            ICCC-PUDUCHERRY
+        </div>
+
+        <div
+            id="time"
+            class="time">
+            --:--
+        </div>
+
+    </div>
+
+
+    <!-- TICKER -->
+
+    <div class="ticker">
+
+        <div
+            id="tickerText"
+            class="ticker-text">
+
+            ★ PUDUCHERRY WEATHER LIVE ★ UPDATING ★
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+const API =
+"https://api.open-meteo.com/v1/forecast" +
+"?latitude=11.94" +
+"&longitude=79.81" +
+"&current=" +
+"temperature_2m," +
+"relative_humidity_2m," +
+"wind_speed_10m," +
+"weather_code" +
+"&timezone=Asia%2FKolkata";
+
+
+function weatherInfo(code){
+
+    if(code === 0)
+        return ["CLEAR","☀"];
+
+    if(code === 1 || code === 2)
+        return ["PARTLY CLOUDY","⛅"];
+
+    if(code === 3)
+        return ["CLOUDY","☁"];
+
+    if(code >= 45 && code <= 48)
+        return ["FOG","🌫"];
+
+    if(code >= 51 && code <= 57)
+        return ["DRIZZLE","🌦"];
+
+    if(code >= 61 && code <= 67)
+        return ["RAIN","🌧"];
+
+    if(code >= 80 && code <= 82)
+        return ["SHOWERS","🌦"];
+
+    if(code >= 95)
+        return ["STORM","⛈"];
+
+    return ["WEATHER","☁"];
+}
+
+
+async function loadWeather(){
+
+    try{
+
+        const response =
+            await fetch(API + "&_=" + Date.now());
+
+        const data =
+            await response.json();
+
+        const current =
+            data.current;
+
+        const temp =
+            Math.round(current.temperature_2m);
+
+        const humidity =
+            Math.round(
+                current.relative_humidity_2m
+            );
+
+        const wind =
+            Math.round(
+                current.wind_speed_10m
+            );
+
+        const weather =
+            weatherInfo(
+                current.weather_code
+            );
+
+
+        document.getElementById("temp")
+            .textContent = temp;
+
+        document.getElementById("humidity")
+            .textContent = humidity;
+
+        document.getElementById("wind")
+            .textContent = wind;
+
+        document.getElementById("description")
+            .textContent = weather[0];
+
+        document.getElementById("icon")
+            .textContent = weather[1];
+
+
+        document.getElementById("tickerText")
+            .textContent =
+            "★ PUDUCHERRY WEATHER LIVE ★ " +
+            temp + "°C ★ " +
+            weather[0] + " ★ HUMIDITY " +
+            humidity + "% ★ WIND " +
+            wind + " km/h ★";
+
+    }
+
+    catch(error){
+
+        document.getElementById("description")
+            .textContent = "OFFLINE";
+
+        document.getElementById("tickerText")
+            .textContent =
+            "★ WEATHER UPDATE UNAVAILABLE ★ RETRYING ★";
+
+    }
+
+}
+
+
+/* CLOCK */
+
+function updateClock(){
+
+    const now = new Date();
+
+    const time =
+        now.toLocaleTimeString(
+            "en-IN",
+            {
+                timeZone:"Asia/Kolkata",
+                hour:"2-digit",
+                minute:"2-digit",
+                hour12:true
+            }
+        );
+
+    document.getElementById("time")
+        .textContent = time;
+}
+
+
+/* START */
+
+loadWeather();
+
+updateClock();
+
+
+/* UPDATE WEATHER EVERY 10 MINUTES */
+
+setInterval(
+    loadWeather,
+    600000
+);
+
+
+/* UPDATE CLOCK EVERY SECOND */
+
+setInterval(
+    updateClock,
+    1000
+);
+
+</script>
+
+</body>
+</html>
