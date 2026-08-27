@@ -9,7 +9,7 @@
 html,body{width:96px;height:192px;overflow:hidden;background:#000}
 body{font-family:Arial,Helvetica,sans-serif}
 #flip{position:relative;width:96px;height:192px;perspective:600px;transform-style:preserve-3d}
-.page{position:absolute;inset:0;width:96px;height:192px;overflow:hidden;backface-visibility:hidden;transition:transform 1s cubic-bezier(.2,.75,.2,1),filter 1s;transform-style:preserve-3d;background:#000;color:#fff}
+.page{position:absolute;inset:0;width:96px;height:192px;overflow:hidden;backface-visibility:hidden;transition:transform 1.2s cubic-bezier(.16,.84,.24,1),filter 1.2s,opacity .25s;transform-style:preserve-3d;background:#000;color:#fff}
 .weather{transform:rotateY(0);z-index:3}.clock{transform:rotateY(180deg);z-index:2}.awareness{transform:rotateY(180deg);z-index:1}
 #flip.clockOn .weather{transform:rotateY(-180deg);z-index:1}
 #flip.clockOn .clock{transform:rotateY(0);z-index:3}
@@ -22,9 +22,7 @@ body{font-family:Arial,Helvetica,sans-serif}
  content:"";position:absolute;inset:0;pointer-events:none;z-index:50;
  background:repeating-linear-gradient(0deg,rgba(255,255,255,.04) 0 1px,transparent 1px 3px);
 }
-.frame{position:absolute;inset:3px;border:1px solid #5b8d32;box-shadow:inset 0 0 7px rgba(100,255,30,.15)}
-.frame:before,.frame:after{content:"";position:absolute;width:8px;height:8px;border-color:#9dff32;border-style:solid}
-.frame:before{left:-1px;top:-1px;border-width:2px 0 0 2px}.frame:after{right:-1px;bottom:-1px;border-width:0 2px 2px 0}
+.frame{position:absolute;inset:0;border:0;box-shadow:none;pointer-events:none}
 
 /* WEATHER PAGE */
 .weather{background:radial-gradient(circle at 50% 35%,#0a1907,#000 65%)}
@@ -45,10 +43,11 @@ body{font-family:Arial,Helvetica,sans-serif}
 .cards{position:absolute;top:118px;left:5px;width:86px}
 .card{height:12px;margin-bottom:2px;border:1px solid #315b22;background:#050b04;display:flex;align-items:center;padding:0 3px}
 .card b{width:11px;color:#72e8ff;font-size:7px}.card label{flex:1;font-size:4.5px;color:#dbe5d7}.card strong{font-size:6.5px;color:#baff22}.card em{font-style:normal;font-size:4px;color:#baff22;margin-left:2px}
-.wticker,.aticker{position:absolute;bottom:0;left:0;width:96px;height:15px;overflow:hidden;background:#050c03;border-top:1px solid #68a82d;z-index:20;white-space:nowrap}
-.track{display:flex;width:max-content;height:15px;align-items:center;animation:scroll 8s linear infinite}
-.track span{width:96px;flex:none;text-align:center;font-size:4.8px;line-height:15px;color:#caff54;font-weight:bold}
-@keyframes scroll{to{transform:translateX(-96px)}}
+.wticker,.aticker{position:absolute;bottom:0;left:0;width:96px;height:15px;overflow:hidden;background:#050c03;border-top:0;z-index:20;white-space:nowrap}
+.track{display:flex;width:max-content;height:15px;align-items:center;animation:scroll 14s linear infinite;will-change:transform}
+.track span{width:auto;min-width:96px;flex:none;text-align:left;padding-right:96px;font-size:4.1px;line-height:15px;color:#caff54;font-weight:bold;white-space:nowrap}
+@keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.tickerColor{transition:color .5s ease;text-shadow:0 0 4px currentColor}
 
 /* CLOCK PAGE */
 .clock{background:radial-gradient(circle at 50% 45%,#0b1607,#000 67%)}
@@ -58,13 +57,11 @@ body{font-family:Arial,Helvetica,sans-serif}
 .date{position:absolute;top:44px;width:96px;text-align:center;color:#baff22;font:900 28px/28px Arial;text-shadow:0 0 6px #baff22,0 0 12px #4cff00}
 .date small{font-size:8px;vertical-align:top}
 .day{position:absolute;top:75px;width:96px;text-align:center;font-size:6px;font-weight:bold;letter-spacing:1px}
-.digital{position:absolute;top:89px;width:96px;text-align:center;font:900 21px/25px "Courier New",monospace;color:#dfffaa;letter-spacing:1px;text-shadow:0 0 6px #baff35,0 0 12px #4cff00;animation:dg 2s infinite alternate}
+.digital{position:absolute;top:89px;width:96px;text-align:center;font:900 24px/28px "Courier New",monospace;color:#dfffaa;letter-spacing:1px;text-shadow:0 0 6px #baff35,0 0 12px #4cff00;animation:dg 2s infinite alternate}
 @keyframes dg{to{opacity:.95;text-shadow:0 0 8px #dfff80,0 0 16px #4cff00}}
-.secbar{position:absolute;top:119px;left:10px;width:76px;height:3px;border:1px solid #355c24;background:#020502}
-.secbar div{height:100%;background:#baff22;box-shadow:0 0 4px #8cff00}
 .ist{position:absolute;top:127px;width:96px;text-align:center;font-size:4px;color:#748974;letter-spacing:.8px}
-.clockMsg{position:absolute;top:140px;left:8px;width:80px;text-align:center;color:#aaff42;font-size:6px;font-weight:bold;line-height:9px}
-.clockMsg strong{display:block;color:#fff;font-size:7px;margin-bottom:3px}
+.clockMsg{position:absolute;top:137px;left:5px;width:86px;height:27px;display:flex;align-items:center;justify-content:center;text-align:center;color:#aaff42;font-size:5px;font-weight:bold;line-height:7px;padding:2px}
+.clockMsg strong{display:block;color:#fff;font-size:6px;line-height:8px}
 
 /* AWARENESS PAGE */
 .awareness{background:radial-gradient(circle at 50% 35%,#171000,#000 68%)}
@@ -98,7 +95,7 @@ body{font-family:Arial,Helvetica,sans-serif}
   <div class="card"><b>≋</b><label>WIND SPEED</label><strong id="wind">--</strong><em>km/h</em></div>
   <div class="card"><b>♨</b><label>FEELS LIKE</label><strong id="feels">--</strong><em>°C</em></div>
 </div>
-<div class="wticker"><div class="track"><span id="wt1">» PUDUCHERRY WEATHER LIVE • UPDATING »</span><span id="wt2">» PUDUCHERRY WEATHER LIVE • UPDATING »</span></div></div>
+<div class="wticker"><div class="track"><span id="wt1" class="tickerColor">» PUDUCHERRY WEATHER LIVE • UPDATING »</span><span id="wt2" class="tickerColor">» PUDUCHERRY WEATHER LIVE • UPDATING »</span></div></div>
 </section>
 
 <!-- PAGE 2 CLOCK -->
@@ -109,8 +106,7 @@ body{font-family:Arial,Helvetica,sans-serif}
 <div class="date"><span id="day">--</span> <small id="month">---</small></div>
 <div class="day" id="weekday">---</div>
 <div class="digital" id="clock">00:00:00</div>
-<div class="secbar"><div id="secFill"></div></div>
-<div class="clockMsg"><strong>GOOD DAY • PUDUCHERRY</strong></div>
+<div class="clockMsg"><strong id="proverb">A GOOD DAY BEGINS WITH A GOOD THOUGHT.</strong></div>
 <div class="aticker"><div class="track"><span>» PUDUCHERRY • DIGITAL TIME • DATE • LIVE »</span><span>» PUDUCHERRY • DIGITAL TIME • DATE • LIVE »</span></div></div>
 </section>
 
@@ -133,7 +129,7 @@ body{font-family:Arial,Helvetica,sans-serif}
 
 
 <div class="aticker"><div class="track">
-<span>» KEEP PUDUCHERRY CLEAN • USE DUSTBIN • DRIVE SAFE »</span>
+<span class="tickerColor">» KEEP PUDUCHERRY CLEAN • USE DUSTBIN • DRIVE SAFE »</span>
 </div></div>
 </section>
 
@@ -176,11 +172,10 @@ async function loadWeather(){
 function updateClock(){
  const n=new Date();
  const opt={timeZone:'Asia/Kolkata'};
- document.getElementById('clock').textContent=n.toLocaleTimeString('en-GB',{...opt,hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
+ document.getElementById('clock').textContent=n.toLocaleTimeString('en-GB',{...opt,hour:'2-digit',minute:'2-digit',hour12:false});
  document.getElementById('day').textContent=n.toLocaleDateString('en-GB',{...opt,day:'2-digit'});
  document.getElementById('month').textContent=n.toLocaleDateString('en-GB',{...opt,month:'short'}).toUpperCase();
  document.getElementById('weekday').textContent=n.toLocaleDateString('en-GB',{...opt,weekday:'long'}).toUpperCase();
- document.getElementById('secFill').style.width=((n.getSeconds()/59)*100)+'%';
 }
 
 const awareness=[
@@ -199,6 +194,25 @@ function updateAwareness(){
  document.getElementById('awMessage').textContent=a[2];
 }
 
+const proverbs=[
+ 'A GOOD DAY BEGINS WITH A GOOD THOUGHT.',
+ 'SMALL STEPS LEAD TO BIG SUCCESS.',
+ 'KINDNESS MAKES EVERY DAY BETTER.',
+ 'KEEP MOVING FORWARD, ONE STEP AT A TIME.',
+ 'A CLEAN CITY IS A HAPPY CITY.',
+ 'SAFETY FIRST, ALWAYS.'
+];
+let pi=0;
+function updateProverb(){
+ const el=document.getElementById('proverb');
+ if(el) el.textContent=proverbs[pi++%proverbs.length];
+}
+
+const tickerColors=['#caff54','#55e7ff','#ffd34d','#ff75d8','#7dff9a','#ffffff'];
+function randomTickerColor(){
+ const color=tickerColors[Math.floor(Math.random()*tickerColors.length)];
+ document.querySelectorAll('.tickerColor').forEach(el=>el.style.color=color);
+}
 let page=0;
 function flip(){
  page=(page+1)%3;
@@ -206,11 +220,13 @@ function flip(){
  if(page===1)document.getElementById('flip').classList.add('clockOn');
  if(page===2)document.getElementById('flip').classList.add('awarenessOn');
 }
-loadWeather();updateClock();updateAwareness();
+loadWeather();updateClock();updateAwareness();updateProverb();randomTickerColor();
 setInterval(loadWeather,600000);
+setInterval(randomTickerColor,2000);
 setInterval(updateClock,100);
 setInterval(updateAwareness,5000);
-setInterval(flip,8000);
+setInterval(updateProverb,5000);
+setInterval(flip,20000);
 </script>
 </body>
 </html>
