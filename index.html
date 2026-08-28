@@ -1,266 +1,64 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8">
 <meta name="viewport" content="width=96,height=192,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>Puducherry Smart Billboard</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{width:96px;height:192px;overflow:hidden;background:#000}
-body{font-family:Arial,Helvetica,sans-serif}
-#flip{position:relative;width:96px;height:192px;perspective:1200px;transform-style:preserve-3d}
-.page{position:absolute;inset:0;width:96px;height:192px;overflow:hidden;backface-visibility:hidden;transition:transform 1.2s cubic-bezier(.16,.84,.24,1),filter 1.2s,opacity .25s;transform-style:preserve-3d}
-.weather{transform:rotateY(0);z-index:3}.clock{transform:rotateY(180deg);z-index:2}.awareness{transform:rotateY(180deg);z-index:1}
-#flip.clockOn .weather{transform:rotateY(-180deg);z-index:1}
-#flip.clockOn .clock{transform:rotateY(0);z-index:3}
-#flip.clockOn .awareness{transform:rotateY(180deg);z-index:1}
-#flip.awarenessOn .weather{transform:rotateY(-360deg);z-index:1}
-#flip.awarenessOn .clock{transform:rotateY(-180deg);z-index:1}
-#flip.awarenessOn .awareness{transform:rotateY(0);z-index:3}
-
-.page:before{
- content:"";position:absolute;inset:0;pointer-events:none;z-index:50;
- background:repeating-linear-gradient(0deg,rgba(255,255,255,.04) 0 1px,transparent 1px 3px);
-}
-.frame{position:absolute;inset:0;border:0;box-shadow:none;pointer-events:none}
-
-/* ENHANCED ANIMATIONS */
-@keyframes slideInDown{
- from{transform:translateY(-20px);opacity:0}
- to{transform:translateY(0);opacity:1}
-}
-@keyframes slideInUp{
- from{transform:translateY(20px);opacity:0}
- to{transform:translateY(0);opacity:1}
-}
-@keyframes slideInLeft{
- from{transform:translateX(-15px);opacity:0}
- to{transform:translateX(0);opacity:1}
-}
-@keyframes fadeIn{
- from{opacity:0}
- to{opacity:1}
-}
-@keyframes shimmer{
- 0%{text-shadow:0 0 5px #baff20,0 0 12px #49ff00}
- 50%{text-shadow:0 0 12px #d5ff70,0 0 20px #42ff00}
- 100%{text-shadow:0 0 5px #baff20,0 0 12px #49ff00}
-}
-
-/* WEATHER PAGE */
-.weather{background:radial-gradient(circle at 50% 35%,#0a1907,#000 65%)}
-.whead{position:absolute;top:7px;left:5px;width:86px;text-align:center;font-size:7px;font-weight:900;letter-spacing:.8px;color:#fff;animation:slideInDown .6s ease-out}
-.wsub{position:absolute;top:18px;left:0;width:96px;text-align:center;font-size:4px;color:#92ff31;letter-spacing:.6px;animation:slideInDown .7s ease-out}
-.live{position:absolute;right:5px;top:7px;font-size:4px;color:#baff62;animation:slideInLeft .6s ease-out}
-.dot{display:inline-block;width:3px;height:3px;border-radius:50%;background:#ff3b25;box-shadow:0 0 4px red;animation:blink 1s infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.15}}
-.dots{position:absolute;top:26px;left:8px;width:80px;display:flex;justify-content:space-between;animation:fadeIn .8s ease-out .1s both}
-.dots i{width:2px;height:2px;border-radius:50%;background:#aaff2e;animation:pulse 1.5s infinite alternate}
-@keyframes pulse{from{opacity:.2;box-shadow:0 0 2px #8cff00}to{opacity:1;box-shadow:0 0 6px #8cff00}}
-.temp{position:absolute;top:34px;width:96px;text-align:center;font:900 34px/36px Arial;color:#baff20;letter-spacing:-2px;animation:slideInDown .8s cubic-bezier(.34,1.56,.64,1) .2s both;text-shadow:0 0 5px #baff20,0 0 12px #49ff00}
-.temp{animation:slideInDown .8s cubic-bezier(.34,1.56,.64,1) .2s both,shimmer 3s ease-in-out infinite .9s}
-.temp small{font-size:10px;vertical-align:top;letter-spacing:0}
-.icon{position:absolute;top:75px;left:0;width:96px;text-align:center;font-size:27px;animation:float 2.5s ease-in-out infinite,slideInUp .8s ease-out .4s both}
-@keyframes float{0%{transform:translateY(0)}25%{transform:translateY(-4px)}50%{transform:translateY(-3px)}75%{transform:translateY(-4px)}100%{transform:translateY(0)}}
-.desc{position:absolute;top:107px;width:96px;text-align:center;font-size:7px;font-weight:bold;color:#fff;text-shadow:0 0 4px #fff;animation:slideInUp .7s ease-out .5s both}
-.cards{position:absolute;top:118px;left:5px;width:86px}
-.card{height:12px;margin-bottom:2px;border:1px solid #315b22;background:#050b04;display:flex;align-items:center;padding:0 3px;animation:slideInUp .6s ease-out both;transform-origin:left}
-.card:nth-child(1){animation-delay:.6s}
-.card:nth-child(2){animation-delay:.7s}
-.card:nth-child(3){animation-delay:.8s}
-.card b{width:11px;color:#72e8ff;font-size:7px}.card label{flex:1;font-size:4.5px;color:#dbe5d7}.card strong{font-size:6.5px;color:#baff22}.card em{font-style:normal;font-size:4px;color:#baff22;margin-left:1px}
-.wticker,.aticker{position:absolute;bottom:0;left:0;width:96px;height:15px;overflow:hidden;background:#050c03;border-top:0;z-index:20;white-space:nowrap}
-.track{display:flex;width:max-content;height:15px;align-items:center;animation:scroll 14s linear infinite;will-change:transform}
-.track span{width:auto;min-width:96px;flex:none;text-align:left;padding-right:96px;font-size:4.1px;line-height:15px;color:#caff54;font-weight:bold;white-space:nowrap}
-@keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-.tickerColor{transition:color .6s ease;text-shadow:0 0 4px currentColor;filter:brightness(1)}
-
-/* CLOCK PAGE */
-.clock{background:radial-gradient(circle at 50% 45%,#0b1607,#000 67%)}
-.chead{position:absolute;top:10px;width:96px;text-align:center;font-size:8px;font-weight:900;letter-spacing:1px;color:#fff;animation:slideInDown .6s ease-out}
-.csub{position:absolute;top:22px;width:96px;text-align:center;font-size:4px;color:#9dff31;letter-spacing:.7px;animation:slideInDown .7s ease-out}
-.today{position:absolute;top:36px;width:96px;text-align:center;font-size:5px;color:#879b83;letter-spacing:1.5px;animation:fadeIn .7s ease-out .3s both}
-.date{position:absolute;top:44px;width:96px;text-align:center;color:#baff22;font:900 28px/28px Arial;animation:slideInDown .8s cubic-bezier(.34,1.56,.64,1) .4s both}
-.date{text-shadow:0 0 6px #baff22,0 0 12px #4cff00;animation:slideInDown .8s cubic-bezier(.34,1.56,.64,1) .4s both,shimmer 3s ease-in-out infinite 1.2s}
-.date small{font-size:8px;vertical-align:top}
-.day{position:absolute;top:75px;width:96px;text-align:center;font-size:6px;font-weight:bold;letter-spacing:1px;animation:slideInUp .7s ease-out .5s both}
-.digital{position:absolute;top:89px;width:96px;text-align:center;font:900 24px/28px "Courier New",monospace;color:#dfffaa;letter-spacing:1px;animation:slideInUp .8s ease-out .6s both}
-.digital{text-shadow:0 0 6px #baff35,0 0 12px #4cff00;animation:slideInUp .8s ease-out .6s both,dg 2s infinite alternate 1.4s}
-@keyframes dg{from{opacity:1;text-shadow:0 0 6px #baff35,0 0 12px #4cff00}to{opacity:.95;text-shadow:0 0 8px #dfff80,0 0 16px #4cff00}}
-.ist{position:absolute;top:127px;width:96px;text-align:center;font-size:4px;color:#748974;letter-spacing:.8px;animation:fadeIn .7s ease-out .7s both}
-.clockMsg{position:absolute;top:137px;left:5px;width:86px;height:27px;display:flex;align-items:center;justify-content:center;text-align:center;color:#aaff42;font-size:5px;font-weight:bold;line-height:6px;border:1px solid #3a5a3d;background:#0a140a;animation:slideInUp .8s ease-out .8s both}
-.clockMsg strong{display:block;color:#fff;font-size:6px;line-height:8px}
-
-/* AWARENESS PAGE */
-.awareness{background:radial-gradient(circle at 50% 35%,#171000,#000 68%)}
-.ahead{position:absolute;top:9px;width:96px;text-align:center;font-size:8px;font-weight:900;letter-spacing:1px;color:#fff;animation:slideInDown .6s ease-out}
-.asub{position:absolute;top:21px;width:96px;text-align:center;font-size:4px;color:#ffc934;letter-spacing:.6px;animation:slideInDown .7s ease-out}
-.awIcon{position:absolute;top:31px;width:96px;text-align:center;font-size:26px;animation:awpulse 1.8s infinite,slideInDown .8s ease-out .3s both}
-@keyframes awpulse{0%{transform:scale(1)}50%{transform:scale(1.12)}}
-.awTitle{position:absolute;top:63px;width:96px;text-align:center;font-size:8px;font-weight:900;color:#ffd03d;text-shadow:0 0 6px #ff9d00;animation:slideInUp .7s ease-out .4s both}
-.awMessage{position:absolute;top:76px;left:6px;width:84px;min-height:21px;padding:4px;text-align:center;display:flex;align-items:center;justify-content:center;border:1px solid #876320;background:#1a1107;animation:slideInUp .7s ease-out .5s both}
-.rules{position:absolute;top:103px;left:7px;width:82px}
-.rule{height:13px;display:flex;align-items:center;border-bottom:1px solid #3c2e12;font-size:4.7px;font-weight:bold;color:#e5e9e2;animation:slideInLeft .6s ease-out both}
-.rule:nth-child(1){animation-delay:.6s}
-.rule:nth-child(2){animation-delay:.7s}
-.rule:nth-child(3){animation-delay:.8s}
-.rule:nth-child(4){animation-delay:.9s}
-.rule:nth-child(5){animation-delay:1s}
-.rule b{width:13px;color:#ffd03d;font-family:"Courier New",monospace}
-.awBottom{position:absolute;left:7px;right:7px;bottom:24px;height:10px;border-top:1px solid #5b451a;display:flex;justify-content:space-between;align-items:center;color:#ffc83a;font-size:4.5px;font-weight:bold}
+/* This canvas is intentionally a fixed 96 x 192 px billboard. */
+*{box-sizing:border-box;margin:0;padding:0} html,body{width:96px;height:192px;overflow:hidden;background:#000}
+body{font-family:Arial,Helvetica,sans-serif;color:#f7fff0} #billboard{position:relative;width:96px;height:192px;overflow:hidden;isolation:isolate;perspective:700px}
+.page{position:absolute;inset:0;overflow:hidden;visibility:hidden;opacity:0;transform:rotateY(12deg) scale(.985);transform-origin:center;filter:brightness(.65);transition:opacity .38s ease,transform .88s cubic-bezier(.22,.8,.25,1),filter .55s ease,visibility 0s linear .9s;backface-visibility:hidden;will-change:transform,opacity}
+.page.is-active{visibility:visible;opacity:1;transform:rotateY(0) scale(1);filter:brightness(1);transition-delay:0s;z-index:2}.page.is-leaving{visibility:visible;opacity:0;transform:rotateY(-12deg) scale(.985);filter:brightness(.55);z-index:1}
+.page:after{content:"";position:absolute;inset:0;z-index:20;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(255,255,255,.035) 0 1px,transparent 1px 3px),linear-gradient(90deg,rgba(255,255,255,.025),transparent 24%,transparent 76%,rgba(255,255,255,.02));mix-blend-mode:screen}
+.weather{background:radial-gradient(circle at 50% 31%,#173e1a 0,#071209 42%,#000 79%)}.clock{background:radial-gradient(circle at 50% 42%,#183316 0,#071108 44%,#000 79%)}.awareness{background:radial-gradient(circle at 50% 33%,#423005 0,#181202 45%,#000 80%)}
+.page:before{content:"";position:absolute;inset:-18%;z-index:0;pointer-events:none;opacity:.55;filter:blur(12px);animation:shadeDrift 8s ease-in-out infinite alternate}.page>*{z-index:1}.weather:before{background:radial-gradient(circle at 25% 30%,#2d8a30,transparent 33%),radial-gradient(circle at 76% 67%,#0f5020,transparent 38%)}.clock:before{background:radial-gradient(circle at 20% 67%,#27722d,transparent 36%),radial-gradient(circle at 78% 25%,#6c9b18,transparent 33%);animation-duration:10s}.awareness:before{background:radial-gradient(circle at 24% 28%,#c78508,transparent 32%),radial-gradient(circle at 77% 68%,#744606,transparent 40%);animation-duration:9s}@keyframes shadeDrift{from{transform:translate3d(-4%,-3%,0) scale(1);opacity:.35}to{transform:translate3d(4%,3%,0) scale(1.1);opacity:.7}}
+.sky .weather,.sky .clock,.sky .awareness{background:radial-gradient(circle at 50% 28%,#1b88c2 0,#063251 45%,#010c16 82%)}.sky .weather:before,.sky .clock:before,.sky .awareness:before{background:radial-gradient(circle at 22% 24%,#5ddcff,transparent 32%),radial-gradient(circle at 78% 70%,#0a6faf,transparent 42%)}.sky .weather .sub,.sky .clock .sub,.sky .temperature,.sky .date,.sky .card strong,.sky .card em{color:#8eeaff}.sky .temperature,.sky .date{ text-shadow:0 0 6px #55d7ff,0 0 13px #087bb9}.sky .divider{background:linear-gradient(90deg,transparent,#73ddff,transparent)}.sky .card{border-color:#247ca7;background:rgba(2,25,43,.88)}.sky .card b{color:#7ee6ff}.sky .ticker{background:rgba(1,25,44,.95);border-color:rgba(109,220,255,.45)}.sky .ticker-copy{color:#a7efff}.sky .message{border-color:#267fa9;background:rgba(3,31,51,.9)}.sky .aw-title,.sky .awareness .sub,.sky .rule b{color:#8eeaff;text-shadow:0 0 6px #168fd0}.sky .aw-message{border-color:#237da6;background:rgba(4,31,49,.92)}.sky .rule{border-color:#205675}.sky .awareness .ticker{background:rgba(1,25,44,.95);border-color:rgba(109,220,255,.45)}
+.intro{opacity:0}.page.is-active .intro{animation:enter .48s cubic-bezier(.22,.8,.25,1) var(--d,0ms) both}.page.is-active .intro-left{animation:enterLeft .48s cubic-bezier(.22,.8,.25,1) var(--d,0ms) both}.page.is-active .intro-pop{animation:pop .56s cubic-bezier(.2,1.25,.3,1) var(--d,0ms) both}
+@keyframes enter{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}@keyframes enterLeft{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}@keyframes pop{from{opacity:0;transform:translateY(7px) scale(.88)}to{opacity:1;transform:translateY(0) scale(1)}}
+.title{position:absolute;top:7px;width:96px;text-align:center;font-size:7px;line-height:8px;font-weight:900;letter-spacing:.72px;color:#fff;text-shadow:0 1px 2px #000}.sub{position:absolute;top:18px;width:96px;text-align:center;font-size:4px;letter-spacing:.65px}.weather .sub,.clock .sub{color:#9dff50}.awareness .sub{color:#ffd45a}.live{position:absolute;right:5px;top:8px;font-size:3.7px;color:#d2ff94;letter-spacing:.2px}.dot{display:inline-block;width:3px;height:3px;border-radius:50%;background:#ff4a39;box-shadow:0 0 4px #ff261a;animation:blink 1.05s steps(2,end) infinite}@keyframes blink{50%{opacity:.25}}
+.title{position:absolute;top:7px;width:96px;text-align:center;font-size:7px;line-height:8px;font-weight:900;letter-spacing:.72px;color:#fff;text-shadow:0 1px 2px #000}.sub{position:absolute;top:18px;width:96px;text-align:center;font-size:4px;letter-spacing:.65px}.weather .sub,.clock .sub{color:#9dff50}.awareness .sub{color:#ffd45a}.live{position:absolute;right:5px;top:8px;font-size:3.7px;color:#d2ff94;letter-spacing:.2px}.dot{display:inline-block;width:3px;height:3px;border-radius:50%;background:#ff4a39;box-shadow:0 0 4px #ff261a;animation:blink 1.05s steps(2,end) infinite}@keyframes blink{50%{opacity:.25}}
+html[lang="ta"] body{font-family:"Noto Sans Tamil","Latha",Arial,sans-serif}html[lang="ta"] .title{font-size:5.2px;line-height:8px;letter-spacing:0}html[lang="ta"] .sub{font-size:3.7px;letter-spacing:0}html[lang="ta"] .description{font-size:5.6px}html[lang="ta"] .card label{font-size:3.8px}html[lang="ta"] .message,html[lang="ta"] .aw-message{font-size:4.6px;line-height:6px}html[lang="ta"] .aw-title{font-size:6.3px;letter-spacing:0}html[lang="ta"] .rule{font-size:3.85px}html[lang="ta"] .ticker-copy{font-size:3.7px}
+.divider{position:absolute;top:27px;left:10px;width:76px;height:1px;background:linear-gradient(90deg,transparent,#95ff4d,transparent);opacity:.68}.temperature{position:absolute;top:34px;width:96px;text-align:center;font:900 33px/35px Arial;letter-spacing:-2.5px;color:#c8ff36;text-shadow:0 0 5px #baff20,0 0 13px #41ca17}.temperature small{font-size:10px;vertical-align:top;letter-spacing:0}.weather-icon-wrap{position:absolute;top:74px;width:96px;text-align:center}.weather-icon{font-size:26px;line-height:28px;display:inline-block;animation:float 2.7s ease-in-out infinite}@keyframes float{50%{transform:translateY(-3px)}}.description{position:absolute;top:106px;width:96px;text-align:center;font-size:6.5px;font-weight:bold;letter-spacing:.2px;text-shadow:0 0 3px #fff}
+.cards{position:absolute;top:117px;left:5px;width:86px}.card{height:12px;margin-bottom:2px;padding:0 3px;display:flex;align-items:center;border:1px solid #345a29;background:rgba(4,13,5,.88)}.card b{width:11px;font-size:7px;color:#70eaff}.card label{flex:1;font-size:4.35px;color:#e4eedf}.card strong{font-size:6.3px;color:#c8ff36}.card em{margin-left:1px;font-size:3.8px;font-style:normal;color:#c8ff36}
+.today{position:absolute;top:35px;width:96px;text-align:center;font-size:4.5px;letter-spacing:1.4px;color:#9aa995}.date{position:absolute;top:44px;width:96px;text-align:center;font:900 28px/29px Arial;letter-spacing:-1px;color:#c8ff36;text-shadow:0 0 6px #baff22,0 0 12px #42be18}.date small{font-size:8px;vertical-align:top;letter-spacing:0}.weekday{position:absolute;top:76px;width:96px;text-align:center;font-size:5.7px;font-weight:bold;letter-spacing:1px}.digital{position:absolute;top:89px;width:96px;text-align:center;font:900 22px/27px "Courier New",monospace;letter-spacing:.4px;color:#e4ffc0;text-shadow:0 0 6px #baff35,0 0 11px #4cff00}.ist{position:absolute;top:127px;width:96px;text-align:center;font-size:3.8px;letter-spacing:.75px;color:#9aa995}.message{position:absolute;top:137px;left:5px;width:86px;height:27px;padding:3px;display:flex;align-items:center;justify-content:center;text-align:center;border:1px solid #3d6737;background:rgba(11,25,10,.9);font-size:5.5px;line-height:7px;color:#fff}
+.aw-icon-wrap{position:absolute;top:31px;width:96px;text-align:center}.aw-icon{display:inline-block;font-size:25px;line-height:27px;animation:softPulse 2s ease-in-out infinite}@keyframes softPulse{50%{transform:scale(1.08)}}.aw-title{position:absolute;top:63px;width:96px;text-align:center;font-size:7.5px;font-weight:900;letter-spacing:.15px;color:#ffd34c;text-shadow:0 0 6px #db9500}.aw-message{position:absolute;top:76px;left:6px;width:84px;min-height:21px;padding:3px;display:flex;align-items:center;justify-content:center;text-align:center;border:1px solid #876321;background:rgba(30,20,4,.92);font-size:5px;font-weight:bold;line-height:6px}.rules{position:absolute;top:103px;left:7px;width:82px}.rule{height:13px;display:flex;align-items:center;border-bottom:1px solid #493816;font-size:4.45px;font-weight:bold;line-height:5px;color:#f2f2eb}.rule b{width:13px;color:#ffd34c;font-family:"Courier New",monospace}
+.ticker{position:absolute;bottom:0;left:0;width:96px;height:15px;overflow:hidden;z-index:10;background:rgba(3,11,3,.94);border-top:1px solid rgba(185,255,65,.28)}.awareness .ticker{background:rgba(22,15,1,.94);border-color:rgba(255,202,57,.3)}.ticker-track{display:flex;width:max-content;height:15px;will-change:transform;animation:ticker 15s linear infinite}.ticker-copy{display:block;flex:0 0 auto;padding-right:24px;font-size:4px;line-height:15px;font-weight:bold;letter-spacing:.08px;white-space:nowrap;color:#caff54;text-shadow:0 0 4px currentColor}@keyframes ticker{to{transform:translateX(-50%)}}.ticker-track:hover{animation-play-state:paused}
+@media (prefers-reduced-motion:reduce){.page,.page:before,.page.is-active .intro,.page.is-active .intro-left,.page.is-active .intro-pop,.weather-icon,.aw-icon,.ticker-track,.dot{animation:none;transition:none}.intro,.page.is-active .intro{opacity:1}}
 </style>
 </head>
 <body>
-
-<div id="flip">
-
-<!-- PAGE 1 WEATHER -->
-<section class="page weather">
-<div class="frame"></div>
-<div class="whead">PUDUCHERRY WEATHER</div><div class="live"><span class="dot"></span> LIVE</div>
-<div class="wsub"></div>
-<div class="dots"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-<div class="temp"><span id="temp">--</span><small>°C</small></div>
-<div class="icon" id="icon">⛅</div>
-<div class="desc" id="desc">LOADING WEATHER</div>
-<div class="cards">
-  <div class="card"><b>♢</b><label>HUMIDITY</label><strong id="hum">--</strong><em>%</em></div>
-  <div class="card"><b>≋</b><label>WIND SPEED</label><strong id="wind">--</strong><em>km/h</em></div>
-  <div class="card"><b>♨</b><label>FEELS LIKE</label><strong id="feels">--</strong><em>°C</em></div>
-</div>
-<div class="wticker"><div class="track"><span id="wt1" class="tickerColor">» PUDUCHERRY WEATHER LIVE • UPDATING »</span><span id="wt2" class="tickerColor">» PUDUCHERRY WEATHER LIVE • UPDATING »</span></div></div>
-</section>
-
-<!-- PAGE 2 CLOCK -->
-<section class="page clock">
-<div class="frame"></div>
-<div class="chead">PUDUCHERRY</div><div class="csub"> •ICCC</div>
-<div class="today">TODAY</div>
-<div class="date"><span id="day">--</span> <small id="month">---</small></div>
-<div class="day" id="weekday">---</div>
-<div class="digital" id="clock">00:00:00</div>
-<div class="ist">Indian Standard Time</div>
-<div class="clockMsg"><strong id="proverb">A GOOD DAY BEGINS WITH A GOOD THOUGHT.</strong></div>
-<div class="aticker"><div class="track"><span>» PUDUCHERRY • DIGITAL TIME • DATE • LIVE »</span><span>» PUDUCHERRY • DIGITAL TIME • DATE • LIVE »</span></div></div>
-</section>
-
-<!-- PAGE 3 PUBLIC AWARENESS -->
-<section class="page awareness">
-<div class="frame"></div>
-<div class="ahead">PUDUCHERRY</div>
-<div class="asub">PUBLIC AWARENESS • SMART CITY</div>
-<div class="awIcon" id="awIcon">🚦</div>
-<div class="awTitle" id="awTitle">TRAFFIC SAFETY</div>
-<div class="awMessage" id="awMessage">FOLLOW TRAFFIC RULES</div>
-
-<div class="rules">
-  <div class="rule"><b>01</b> WEAR HELMET / SEAT BELT</div>
-  <div class="rule"><b>02</b> STOP AT RED SIGNAL</div>
-  <div class="rule"><b>03</b> USE ZEBRA CROSSING</div>
-  <div class="rule"><b>04</b> DON'T USE PHONE WHILE DRIVING</div>
-  <div class="rule"><b>05</b> DON'T LITTER</div>
-</div>
-
-<div class="aticker"><div class="track">
-<span class="tickerColor">» KEEP PUDUCHERRY CLEAN • USE DUSTBIN • DRIVE SAFE »</span>
-<span class="tickerColor">» KEEP PUDUCHERRY CLEAN • USE DUSTBIN • DRIVE SAFE »</span>
-</div></div>
-</section>
-
-</div>
-
+<main id="billboard" aria-label="புதுச்சேரி ஸ்மார்ட் விளம்பரப் பலகை">
+ <section class="page weather is-active" data-page="weather">
+  <div class="title intro" style="--d:50ms">புதுச்சேரி வானிலை</div><div class="live intro-left" style="--d:120ms"><i class="dot"></i> நேரலை</div><div class="divider intro" style="--d:100ms"></div>
+  <div class="temperature intro-pop" style="--d:170ms"><span id="temp">--</span><small>°C</small></div><div class="weather-icon-wrap intro" style="--d:260ms"><span class="weather-icon" id="icon">⛅</span></div><div class="description intro" style="--d:330ms" id="desc">வானிலை ஏற்றப்படுகிறது</div>
+  <div class="cards"><div class="card intro-left" style="--d:390ms"><b>◇</b><label>ஈரப்பதம்</label><strong id="hum">--</strong><em>%</em></div><div class="card intro-left" style="--d:450ms"><b>≋</b><label>காற்று வேகம்</label><strong id="wind">--</strong><em>km/h</em></div><div class="card intro-left" style="--d:510ms"><b>♨</b><label>உணர்வு வெப்பம்</label><strong id="feels">--</strong><em>°C</em></div></div>
+  <div class="ticker"><div class="ticker-track" id="weatherTicker"><span class="ticker-copy" id="wt1">» புதுச்சேரி வானிலை • புதுப்பிக்கிறது</span><span class="ticker-copy" id="wt2" aria-hidden="true">» புதுச்சேரி வானிலை • புதுப்பிக்கிறது</span></div></div>
+ </section>
+ <section class="page clock" data-page="clock">
+  <div class="title intro" style="--d:50ms">புதுச்சேரி</div><div class="sub intro" style="--d:110ms">ICCC • ஸ்மார்ட் நகரம்</div><div class="today intro" style="--d:180ms">இன்று</div><div class="date intro-pop" style="--d:230ms"><span id="day">--</span> <small id="month">---</small></div><div class="weekday intro" style="--d:300ms" id="weekday">---</div><div class="digital intro-pop" style="--d:350ms" id="clock">00:00</div><div class="message intro" style="--d:420ms" id="proverb">நல்ல எண்ணம் நல்ல நாளைத் தொடங்கும்.</div>
+  <div class="ticker"><div class="ticker-track"><span class="ticker-copy">» புதுச்சேரி • நேரம் • தேதி • நேரலை</span><span class="ticker-copy" aria-hidden="true">» புதுச்சேரி • நேரம் • தேதி • நேரலை</span></div></div>
+ </section>
+ <section class="page awareness" data-page="awareness">
+  <div class="title intro" style="--d:50ms">புதுச்சேரி</div><div class="sub intro" style="--d:110ms">பொது விழிப்புணர்வு • ஸ்மார்ட் நகரம்</div><div class="aw-icon-wrap intro-pop" style="--d:190ms"><span class="aw-icon" id="awIcon">🚦</span></div><div class="aw-title intro" style="--d:260ms" id="awTitle">சாலை பாதுகாப்பு</div><div class="aw-message intro" style="--d:320ms" id="awMessage">போக்குவரத்து விதிகளைப் பின்பற்றுங்கள்</div>
+  <div class="rules"><div class="rule intro-left" style="--d:380ms"><b>01</b> தலைக்கவசம் / சீட் பெல்ட் அணியுங்கள்</div><div class="rule intro-left" style="--d:430ms"><b>02</b> சிவப்பு விளக்கில் நிற்கவும்</div><div class="rule intro-left" style="--d:480ms"><b>03</b> ஜீப்ரா கடப்பாதை பயன்படுத்தவும்</div><div class="rule intro-left" style="--d:530ms"><b>04</b> ஓட்டும் போது போன் வேண்டாம்</div><div class="rule intro-left" style="--d:580ms"><b>05</b> குப்பை போடாதீர்கள்</div></div>
+  <div class="ticker"><div class="ticker-track"><span class="ticker-copy">» புதுச்சேரியை சுத்தமாக வைத்திருப்போம் • பாதுகாப்பாக ஓட்டுங்கள்</span><span class="ticker-copy" aria-hidden="true">» புதுச்சேரியை சுத்தமாக வைத்திருப்போம் • பாதுகாப்பாக ஓட்டுங்கள்</span></div></div>
+ </section>
+</main>
 <script>
 const API='https://api.open-meteo.com/v1/forecast?latitude=11.94&longitude=79.81&current=temperature_2m,relative_humidity_2m,wind_speed_10m,apparent_temperature,weather_code&timezone=Asia%2FKolkata';
-
-function weatherText(c){
- if(c===0)return['CLEAR SKY','☀️'];
- if(c<=2)return['PARTLY CLOUDY','⛅'];
- if(c===3)return['CLOUDY','☁️'];
- if(c<=48)return['FOG','🌫️'];
- if(c<=57)return['DRIZZLE','🌦️'];
- if(c<=67)return['RAIN','🌧️'];
- if(c<=82)return['SHOWERS','🌦️'];
- return['THUNDERSTORM','⛈️'];
-}
-
-async function loadWeather(){
- try{
-  const r=await fetch(API+'&_='+Date.now());
-  const d=await r.json(),c=d.current,w=weatherText(c.weather_code);
-  const t=Math.round(c.temperature_2m),h=Math.round(c.relative_humidity_2m);
-  const wind=Math.round(c.wind_speed_10m),feels=Math.round(c.apparent_temperature);
-  document.getElementById('temp').textContent=t;
-  document.getElementById('hum').textContent=h;
-  document.getElementById('wind').textContent=wind;
-  document.getElementById('feels').textContent=feels;
-  document.getElementById('desc').textContent=w[0];
-  document.getElementById('icon').textContent=w[1];
-  const text='» PUDUCHERRY WEATHER • '+t+'°C • '+w[0]+' • HUM '+h+'% • WIND '+wind+' km/h »';
-  document.getElementById('wt1').textContent=text;
-  document.getElementById('wt2').textContent=text;
- }catch(e){
-  document.getElementById('desc').textContent='DATA OFFLINE';
- }
-}
-
-function updateClock(){
- const n=new Date();
- const opt={timeZone:'Asia/Kolkata'};
- document.getElementById('clock').textContent=n.toLocaleTimeString('en-GB',{...opt,hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
- document.getElementById('day').textContent=n.toLocaleDateString('en-GB',{...opt,day:'2-digit'});
- document.getElementById('month').textContent=n.toLocaleDateString('en-GB',{...opt,month:'short'}).toUpperCase();
- document.getElementById('weekday').textContent=n.toLocaleDateString('en-GB',{...opt,weekday:'long'}).toUpperCase();
-}
-
-const awareness=[
- ['🚦','TRAFFIC SAFETY','FOLLOW TRAFFIC RULES'],
- ['🪖','SAFETY FIRST','WEAR HELMET / SEAT BELT'],
- ['🚶','PEDESTRIAN SAFETY','USE ZEBRA CROSSING'],
- ['📵','DRIVE RESPONSIBLY',"DON'T USE PHONE WHILE DRIVING"],
- ['🗑️','KEEP PUDUCHERRY CLEAN','USE DUSTBIN • DO NOT LITTER'],
- ['🌿','CLEAN TOURIST PLACES','KEEP OUR CITY CLEAN']
-];
-let ai=0;
-function updateAwareness(){
- const a=awareness[ai++%awareness.length];
- document.getElementById('awIcon').textContent=a[0];
- document.getElementById('awTitle').textContent=a[1];
- document.getElementById('awMessage').textContent=a[2];
-}
-
-const proverbs=[
- 'A GOOD DAY BEGINS WITH A GOOD THOUGHT.',
- 'SMALL STEPS LEAD TO BIG SUCCESS.',
- 'KINDNESS MAKES EVERY DAY BETTER.',
- 'KEEP MOVING FORWARD, ONE STEP AT A TIME.',
- 'A CLEAN CITY IS A HAPPY CITY.',
- 'SAFETY FIRST, ALWAYS.'
-];
-let pi=0;
-function updateProverb(){
- const el=document.getElementById('proverb');
- if(el) el.textContent=proverbs[pi++%proverbs.length];
-}
-
-const tickerColors=['#caff54','#55e7ff','#ffd34d','#ff75d8','#7dff9a','#ffffff'];
-function randomTickerColor(){
- const color=tickerColors[Math.floor(Math.random()*tickerColors.length)];
- document.querySelectorAll('.tickerColor').forEach(el=>el.style.color=color);
-}
-let page=0;
-function flip(){
- page=(page+1)%3;
- document.getElementById('flip').classList.remove('clockOn','awarenessOn');
- if(page===1)document.getElementById('flip').classList.add('clockOn');
- if(page===2)document.getElementById('flip').classList.add('awarenessOn');
-}
-loadWeather();updateClock();updateAwareness();updateProverb();randomTickerColor();
-setInterval(loadWeather,600000);
-setInterval(randomTickerColor,2000);
-setInterval(updateClock,100);
-setInterval(updateAwareness,5000);
-setInterval(updateProverb,5000);
-setInterval(flip,20000);
+const $=id=>document.getElementById(id);
+const fileName=location.pathname.split('/').pop()||'';
+const english=new URLSearchParams(location.search).get('lang')==='en'||fileName==='puducherry-smart-billboard-english.html'||fileName==='puducherry-smart-billboard-sky-blue.html';
+if(new URLSearchParams(location.search).get('theme')==='sky'||fileName==='puducherry-smart-billboard-sky-blue.html')document.getElementById('billboard').classList.add('sky');
+if(english){document.documentElement.lang='en';document.querySelector('.weather .title').textContent='PUDUCHERRY WEATHER';document.querySelector('.weather .live').innerHTML='<i class="dot"></i> LIVE';document.querySelector('.weather .description').textContent='LOADING WEATHER';document.querySelectorAll('.weather .card label')[0].textContent='HUMIDITY';document.querySelectorAll('.weather .card label')[1].textContent='WIND SPEED';document.querySelectorAll('.weather .card label')[2].textContent='FEELS LIKE';document.querySelectorAll('.weather .ticker-copy').forEach(el=>el.textContent='» PUDUCHERRY WEATHER • UPDATING');document.querySelector('.clock .title').textContent='PUDUCHERRY';document.querySelector('.clock .sub').textContent='ICCC • SMART CITY';document.querySelector('.today').textContent='TODAY';document.querySelector('.clock .message').textContent='A GOOD DAY BEGINS WITH A GOOD THOUGHT.';document.querySelectorAll('.clock .ticker-copy').forEach(el=>el.textContent='» PUDUCHERRY • DIGITAL TIME • DATE • LIVE');document.querySelector('.awareness .title').textContent='PUDUCHERRY';document.querySelector('.awareness .sub').textContent='PUBLIC AWARENESS • SMART CITY';document.querySelector('.aw-title').textContent='TRAFFIC SAFETY';document.querySelector('.aw-message').textContent='FOLLOW TRAFFIC RULES';document.querySelectorAll('.awareness .ticker-copy').forEach(el=>el.textContent='» KEEP PUDUCHERRY CLEAN • USE DUSTBIN • DRIVE SAFE');document.querySelectorAll('.rule')[0].innerHTML='<b>01</b> WEAR HELMET / SEAT BELT';document.querySelectorAll('.rule')[1].innerHTML='<b>02</b> STOP AT RED SIGNAL';document.querySelectorAll('.rule')[2].innerHTML='<b>03</b> USE ZEBRA CROSSING';document.querySelectorAll('.rule')[3].innerHTML='<b>04</b> NO PHONE WHILE DRIVING';document.querySelectorAll('.rule')[4].innerHTML='<b>05</b> DO NOT LITTER'}
+function weatherText(code){const ta=[['தெளிவான வானம்','☀️'],['ஓரளவு மேகமூட்டம்','⛅'],['மேகமூட்டம்','☁️'],['மூடுபனி','🌫️'],['தூறல்','🌦️'],['மழை','🌧️'],['மழை பொழிவு','🌦️'],['இடியுடன் மழை','⛈️']];const en=[['CLEAR SKY','☀️'],['PARTLY CLOUDY','⛅'],['CLOUDY','☁️'],['FOG','🌫️'],['DRIZZLE','🌦️'],['RAIN','🌧️'],['SHOWERS','🌦️'],['THUNDERSTORM','⛈️']];const words=english?en:ta;if(code===0)return words[0];if(code<=2)return words[1];if(code===3)return words[2];if(code<=48)return words[3];if(code<=57)return words[4];if(code<=67)return words[5];if(code<=82)return words[6];return words[7]}
+async function loadWeather(){try{const response=await fetch(API+'&_='+Date.now(),{cache:'no-store'});if(!response.ok)throw Error('Weather unavailable');const current=(await response.json()).current;const [label,emoji]=weatherText(current.weather_code);const t=Math.round(current.temperature_2m),h=Math.round(current.relative_humidity_2m),wind=Math.round(current.wind_speed_10m),feels=Math.round(current.apparent_temperature);$('temp').textContent=t;$('hum').textContent=h;$('wind').textContent=wind;$('feels').textContent=feels;$('desc').textContent=label;$('icon').textContent=emoji;const ticker=english?'» PUDUCHERRY WEATHER • '+t+'°C • '+label+' • HUM '+h+'% • WIND '+wind+' km/h':'» புதுச்சேரி வானிலை • '+t+'°C • '+label+' • ஈரப்பதம் '+h+'% • காற்று '+wind+' km/h';$('wt1').textContent=ticker;$('wt2').textContent=ticker}catch(error){$('desc').textContent=english?'WEATHER DATA OFFLINE':'வானிலைத் தரவு இல்லை'}}
+function updateClock(){const now=new Date(),opt={timeZone:'Asia/Kolkata'};$('clock').textContent=now.toLocaleTimeString('en-GB',{...opt,hour:'2-digit',minute:'2-digit',hour12:false});$('day').textContent=now.toLocaleDateString(english?'en-GB':'ta-IN',{...opt,day:'2-digit'});$('month').textContent=now.toLocaleDateString(english?'en-GB':'ta-IN',{...opt,month:'short'}).toUpperCase();$('weekday').textContent=now.toLocaleDateString(english?'en-GB':'ta-IN',{...opt,weekday:'long'}).toUpperCase()}
+const awareness=english?[['🚦','TRAFFIC SAFETY','FOLLOW TRAFFIC RULES'],['🪖','SAFETY FIRST','WEAR HELMET / SEAT BELT'],['🚶','PEDESTRIAN SAFETY','USE ZEBRA CROSSING'],['📵','DRIVE RESPONSIBLY',"DON'T USE PHONE WHILE DRIVING"],['🗑️','KEEP PUDUCHERRY CLEAN','USE DUSTBIN • DO NOT LITTER'],['🌿','CLEAN TOURIST PLACES','KEEP OUR CITY CLEAN']]:[['🚦','சாலை பாதுகாப்பு','போக்குவரத்து விதிகளைப் பின்பற்றுங்கள்'],['🪖','பாதுகாப்பே முதன்மை','தலைக்கவசம் / சீட் பெல்ட் அணியுங்கள்'],['🚶','பாதசாரி பாதுகாப்பு','ஜீப்ரா கடப்பாதையைப் பயன்படுத்துங்கள்'],['📵','பொறுப்புடன் ஓட்டுங்கள்','ஓட்டும் போது மொபைல் பயன்படுத்தாதீர்கள்'],['🗑️','புதுச்சேரியை சுத்தமாக வைப்போம்','குப்பைத்தொட்டியைப் பயன்படுத்துங்கள்'],['🌿','சுற்றுலா இடங்களை சுத்தமாக வைப்போம்','நமது நகரத்தை சுத்தமாக வைத்திருப்போம்']];let ai=0;function updateAwareness(){const a=awareness[ai++%awareness.length];$('awIcon').textContent=a[0];$('awTitle').textContent=a[1];$('awMessage').textContent=a[2]}
+const proverbs=english?['A GOOD DAY BEGINS WITH A GOOD THOUGHT.','SMALL STEPS LEAD TO BIG SUCCESS.','KINDNESS MAKES EVERY DAY BETTER.','KEEP MOVING FORWARD, ONE STEP AT A TIME.','A CLEAN CITY IS A HAPPY CITY.','SAFETY FIRST, ALWAYS.']:['நல்ல எண்ணம் நல்ல நாளைத் தொடங்கும்.','சிறு முயற்சிகள் பெரும் வெற்றிக்கு வழி.','அன்பு ஒவ்வொரு நாளையும் அழகாக்கும்.','ஒவ்வொரு அடியாக முன்னேறுங்கள்.','சுத்தமான நகரம் மகிழ்ச்சியான நகரம்.','பாதுகாப்பு எப்போதும் முதலில்.'];let pi=0;function updateProverb(){$('proverb').textContent=proverbs[pi++%proverbs.length]}
+const pages=[...document.querySelectorAll('.page')];let pageIndex=0,flipping=false;function flip(){if(flipping)return;flipping=true;const outgoing=pages[pageIndex],next=pages[pageIndex=(pageIndex+1)%pages.length];outgoing.classList.remove('is-active');outgoing.classList.add('is-leaving');next.classList.remove('is-leaving');/* Reading layout makes every entrance animation restart cleanly. */void next.offsetWidth;next.classList.add('is-active');setTimeout(()=>{outgoing.classList.remove('is-leaving');flipping=false},950)}
+loadWeather();updateClock();updateAwareness();updateProverb();setInterval(loadWeather,600000);setInterval(updateClock,1000);setInterval(updateAwareness,5000);setInterval(updateProverb,5000);setInterval(flip,14000);
 </script>
 </body>
 </html>
