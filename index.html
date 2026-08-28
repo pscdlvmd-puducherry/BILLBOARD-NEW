@@ -8,8 +8,8 @@
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{width:96px;height:192px;overflow:hidden;background:#000}
 body{font-family:Arial,Helvetica,sans-serif}
-#flip{position:relative;width:96px;height:192px;perspective:600px;transform-style:preserve-3d}
-.page{position:absolute;inset:0;width:96px;height:192px;overflow:hidden;backface-visibility:hidden;transition:transform 1.2s cubic-bezier(.16,.84,.24,1),filter 1.2s,opacity .25s;transform-style:preserve-3d;background:#000;color:#fff}
+#flip{position:relative;width:96px;height:192px;perspective:1200px;transform-style:preserve-3d}
+.page{position:absolute;inset:0;width:96px;height:192px;overflow:hidden;backface-visibility:hidden;transition:transform 1.2s cubic-bezier(.16,.84,.24,1),filter 1.2s,opacity .25s;transform-style:preserve-3d}
 .weather{transform:rotateY(0);z-index:3}.clock{transform:rotateY(180deg);z-index:2}.awareness{transform:rotateY(180deg);z-index:1}
 #flip.clockOn .weather{transform:rotateY(-180deg);z-index:1}
 #flip.clockOn .clock{transform:rotateY(0);z-index:3}
@@ -24,55 +24,88 @@ body{font-family:Arial,Helvetica,sans-serif}
 }
 .frame{position:absolute;inset:0;border:0;box-shadow:none;pointer-events:none}
 
+/* ENHANCED ANIMATIONS */
+@keyframes slideInDown{
+ from{transform:translateY(-20px);opacity:0}
+ to{transform:translateY(0);opacity:1}
+}
+@keyframes slideInUp{
+ from{transform:translateY(20px);opacity:0}
+ to{transform:translateY(0);opacity:1}
+}
+@keyframes slideInLeft{
+ from{transform:translateX(-15px);opacity:0}
+ to{transform:translateX(0);opacity:1}
+}
+@keyframes fadeIn{
+ from{opacity:0}
+ to{opacity:1}
+}
+@keyframes shimmer{
+ 0%{text-shadow:0 0 5px #baff20,0 0 12px #49ff00}
+ 50%{text-shadow:0 0 12px #d5ff70,0 0 20px #42ff00}
+ 100%{text-shadow:0 0 5px #baff20,0 0 12px #49ff00}
+}
+
 /* WEATHER PAGE */
 .weather{background:radial-gradient(circle at 50% 35%,#0a1907,#000 65%)}
-.whead{position:absolute;top:7px;left:5px;width:86px;text-align:center;font-size:7px;font-weight:900;letter-spacing:.8px;color:#fff}
-.wsub{position:absolute;top:18px;left:0;width:96px;text-align:center;font-size:4px;color:#92ff31;letter-spacing:.6px}
-.live{position:absolute;right:5px;top:7px;font-size:4px;color:#baff62}
+.whead{position:absolute;top:7px;left:5px;width:86px;text-align:center;font-size:7px;font-weight:900;letter-spacing:.8px;color:#fff;animation:slideInDown .6s ease-out}
+.wsub{position:absolute;top:18px;left:0;width:96px;text-align:center;font-size:4px;color:#92ff31;letter-spacing:.6px;animation:slideInDown .7s ease-out}
+.live{position:absolute;right:5px;top:7px;font-size:4px;color:#baff62;animation:slideInLeft .6s ease-out}
 .dot{display:inline-block;width:3px;height:3px;border-radius:50%;background:#ff3b25;box-shadow:0 0 4px red;animation:blink 1s infinite}
-@keyframes blink{50%{opacity:.15}}
-.dots{position:absolute;top:26px;left:8px;width:80px;display:flex;justify-content:space-between}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.15}}
+.dots{position:absolute;top:26px;left:8px;width:80px;display:flex;justify-content:space-between;animation:fadeIn .8s ease-out .1s both}
 .dots i{width:2px;height:2px;border-radius:50%;background:#aaff2e;animation:pulse 1.5s infinite alternate}
-@keyframes pulse{to{opacity:1;box-shadow:0 0 4px #8cff00}from{opacity:.2}}
-.temp{position:absolute;top:34px;width:96px;text-align:center;font:900 34px/36px Arial;color:#baff20;letter-spacing:-2px;text-shadow:0 0 5px #baff20,0 0 12px #49ff00;animation:glow 2s infinite alternate}
+@keyframes pulse{from{opacity:.2;box-shadow:0 0 2px #8cff00}to{opacity:1;box-shadow:0 0 6px #8cff00}}
+.temp{position:absolute;top:34px;width:96px;text-align:center;font:900 34px/36px Arial;color:#baff20;letter-spacing:-2px;animation:slideInDown .8s cubic-bezier(.34,1.56,.64,1) .2s both;text-shadow:0 0 5px #baff20,0 0 12px #49ff00}
+.temp{animation:slideInDown .8s cubic-bezier(.34,1.56,.64,1) .2s both,shimmer 3s ease-in-out infinite .9s}
 .temp small{font-size:10px;vertical-align:top;letter-spacing:0}
-@keyframes glow{to{text-shadow:0 0 8px #d5ff70,0 0 16px #42ff00}}
-.icon{position:absolute;top:75px;left:0;width:96px;text-align:center;font-size:27px;animation:float 2s ease-in-out infinite}
-@keyframes float{50%{transform:translateY(-3px)}}
-.desc{position:absolute;top:107px;width:96px;text-align:center;font-size:7px;font-weight:bold;color:#fff;text-shadow:0 0 4px #fff}
+.icon{position:absolute;top:75px;left:0;width:96px;text-align:center;font-size:27px;animation:float 2.5s ease-in-out infinite,slideInUp .8s ease-out .4s both}
+@keyframes float{0%{transform:translateY(0)}25%{transform:translateY(-4px)}50%{transform:translateY(-3px)}75%{transform:translateY(-4px)}100%{transform:translateY(0)}}
+.desc{position:absolute;top:107px;width:96px;text-align:center;font-size:7px;font-weight:bold;color:#fff;text-shadow:0 0 4px #fff;animation:slideInUp .7s ease-out .5s both}
 .cards{position:absolute;top:118px;left:5px;width:86px}
-.card{height:12px;margin-bottom:2px;border:1px solid #315b22;background:#050b04;display:flex;align-items:center;padding:0 3px}
-.card b{width:11px;color:#72e8ff;font-size:7px}.card label{flex:1;font-size:4.5px;color:#dbe5d7}.card strong{font-size:6.5px;color:#baff22}.card em{font-style:normal;font-size:4px;color:#baff22;margin-left:2px}
+.card{height:12px;margin-bottom:2px;border:1px solid #315b22;background:#050b04;display:flex;align-items:center;padding:0 3px;animation:slideInUp .6s ease-out both;transform-origin:left}
+.card:nth-child(1){animation-delay:.6s}
+.card:nth-child(2){animation-delay:.7s}
+.card:nth-child(3){animation-delay:.8s}
+.card b{width:11px;color:#72e8ff;font-size:7px}.card label{flex:1;font-size:4.5px;color:#dbe5d7}.card strong{font-size:6.5px;color:#baff22}.card em{font-style:normal;font-size:4px;color:#baff22;margin-left:1px}
 .wticker,.aticker{position:absolute;bottom:0;left:0;width:96px;height:15px;overflow:hidden;background:#050c03;border-top:0;z-index:20;white-space:nowrap}
 .track{display:flex;width:max-content;height:15px;align-items:center;animation:scroll 14s linear infinite;will-change:transform}
 .track span{width:auto;min-width:96px;flex:none;text-align:left;padding-right:96px;font-size:4.1px;line-height:15px;color:#caff54;font-weight:bold;white-space:nowrap}
 @keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-.tickerColor{transition:color .5s ease;text-shadow:0 0 4px currentColor}
+.tickerColor{transition:color .6s ease;text-shadow:0 0 4px currentColor;filter:brightness(1)}
 
 /* CLOCK PAGE */
 .clock{background:radial-gradient(circle at 50% 45%,#0b1607,#000 67%)}
-.chead{position:absolute;top:10px;width:96px;text-align:center;font-size:8px;font-weight:900;letter-spacing:1px;color:#fff}
-.csub{position:absolute;top:22px;width:96px;text-align:center;font-size:4px;color:#9dff31;letter-spacing:.7px}
-.today{position:absolute;top:36px;width:96px;text-align:center;font-size:5px;color:#879b83;letter-spacing:1.5px}
-.date{position:absolute;top:44px;width:96px;text-align:center;color:#baff22;font:900 28px/28px Arial;text-shadow:0 0 6px #baff22,0 0 12px #4cff00}
+.chead{position:absolute;top:10px;width:96px;text-align:center;font-size:8px;font-weight:900;letter-spacing:1px;color:#fff;animation:slideInDown .6s ease-out}
+.csub{position:absolute;top:22px;width:96px;text-align:center;font-size:4px;color:#9dff31;letter-spacing:.7px;animation:slideInDown .7s ease-out}
+.today{position:absolute;top:36px;width:96px;text-align:center;font-size:5px;color:#879b83;letter-spacing:1.5px;animation:fadeIn .7s ease-out .3s both}
+.date{position:absolute;top:44px;width:96px;text-align:center;color:#baff22;font:900 28px/28px Arial;animation:slideInDown .8s cubic-bezier(.34,1.56,.64,1) .4s both}
+.date{text-shadow:0 0 6px #baff22,0 0 12px #4cff00;animation:slideInDown .8s cubic-bezier(.34,1.56,.64,1) .4s both,shimmer 3s ease-in-out infinite 1.2s}
 .date small{font-size:8px;vertical-align:top}
-.day{position:absolute;top:75px;width:96px;text-align:center;font-size:6px;font-weight:bold;letter-spacing:1px}
-.digital{position:absolute;top:89px;width:96px;text-align:center;font:900 24px/28px "Courier New",monospace;color:#dfffaa;letter-spacing:1px;text-shadow:0 0 6px #baff35,0 0 12px #4cff00;animation:dg 2s infinite alternate}
-@keyframes dg{to{opacity:.95;text-shadow:0 0 8px #dfff80,0 0 16px #4cff00}}
-.ist{position:absolute;top:127px;width:96px;text-align:center;font-size:4px;color:#748974;letter-spacing:.8px}
-.clockMsg{position:absolute;top:137px;left:5px;width:86px;height:27px;display:flex;align-items:center;justify-content:center;text-align:center;color:#aaff42;font-size:5px;font-weight:bold;line-height:7px;padding:2px}
+.day{position:absolute;top:75px;width:96px;text-align:center;font-size:6px;font-weight:bold;letter-spacing:1px;animation:slideInUp .7s ease-out .5s both}
+.digital{position:absolute;top:89px;width:96px;text-align:center;font:900 24px/28px "Courier New",monospace;color:#dfffaa;letter-spacing:1px;animation:slideInUp .8s ease-out .6s both}
+.digital{text-shadow:0 0 6px #baff35,0 0 12px #4cff00;animation:slideInUp .8s ease-out .6s both,dg 2s infinite alternate 1.4s}
+@keyframes dg{from{opacity:1;text-shadow:0 0 6px #baff35,0 0 12px #4cff00}to{opacity:.95;text-shadow:0 0 8px #dfff80,0 0 16px #4cff00}}
+.ist{position:absolute;top:127px;width:96px;text-align:center;font-size:4px;color:#748974;letter-spacing:.8px;animation:fadeIn .7s ease-out .7s both}
+.clockMsg{position:absolute;top:137px;left:5px;width:86px;height:27px;display:flex;align-items:center;justify-content:center;text-align:center;color:#aaff42;font-size:5px;font-weight:bold;line-height:6px;border:1px solid #3a5a3d;background:#0a140a;animation:slideInUp .8s ease-out .8s both}
 .clockMsg strong{display:block;color:#fff;font-size:6px;line-height:8px}
 
 /* AWARENESS PAGE */
 .awareness{background:radial-gradient(circle at 50% 35%,#171000,#000 68%)}
-.ahead{position:absolute;top:9px;width:96px;text-align:center;font-size:8px;font-weight:900;letter-spacing:1px;color:#fff}
-.asub{position:absolute;top:21px;width:96px;text-align:center;font-size:4px;color:#ffc934;letter-spacing:.6px}
-.awIcon{position:absolute;top:31px;width:96px;text-align:center;font-size:26px;animation:awpulse 1.8s infinite}
-@keyframes awpulse{50%{transform:scale(1.1)}}
-.awTitle{position:absolute;top:63px;width:96px;text-align:center;font-size:8px;font-weight:900;color:#ffd03d;text-shadow:0 0 6px #ff9d00}
-.awMessage{position:absolute;top:76px;left:6px;width:84px;min-height:21px;padding:4px;text-align:center;display:flex;align-items:center;justify-content:center;border:1px solid #876320;background:#120d02;color:#fff;font-size:7.5px;font-weight:900;line-height:9px}
+.ahead{position:absolute;top:9px;width:96px;text-align:center;font-size:8px;font-weight:900;letter-spacing:1px;color:#fff;animation:slideInDown .6s ease-out}
+.asub{position:absolute;top:21px;width:96px;text-align:center;font-size:4px;color:#ffc934;letter-spacing:.6px;animation:slideInDown .7s ease-out}
+.awIcon{position:absolute;top:31px;width:96px;text-align:center;font-size:26px;animation:awpulse 1.8s infinite,slideInDown .8s ease-out .3s both}
+@keyframes awpulse{0%{transform:scale(1)}50%{transform:scale(1.12)}}
+.awTitle{position:absolute;top:63px;width:96px;text-align:center;font-size:8px;font-weight:900;color:#ffd03d;text-shadow:0 0 6px #ff9d00;animation:slideInUp .7s ease-out .4s both}
+.awMessage{position:absolute;top:76px;left:6px;width:84px;min-height:21px;padding:4px;text-align:center;display:flex;align-items:center;justify-content:center;border:1px solid #876320;background:#1a1107;animation:slideInUp .7s ease-out .5s both}
 .rules{position:absolute;top:103px;left:7px;width:82px}
-.rule{height:13px;display:flex;align-items:center;border-bottom:1px solid #3c2e12;font-size:4.7px;font-weight:bold;color:#e5e9e2}
+.rule{height:13px;display:flex;align-items:center;border-bottom:1px solid #3c2e12;font-size:4.7px;font-weight:bold;color:#e5e9e2;animation:slideInLeft .6s ease-out both}
+.rule:nth-child(1){animation-delay:.6s}
+.rule:nth-child(2){animation-delay:.7s}
+.rule:nth-child(3){animation-delay:.8s}
+.rule:nth-child(4){animation-delay:.9s}
+.rule:nth-child(5){animation-delay:1s}
 .rule b{width:13px;color:#ffd03d;font-family:"Courier New",monospace}
 .awBottom{position:absolute;left:7px;right:7px;bottom:24px;height:10px;border-top:1px solid #5b451a;display:flex;justify-content:space-between;align-items:center;color:#ffc83a;font-size:4.5px;font-weight:bold}
 </style>
@@ -106,6 +139,7 @@ body{font-family:Arial,Helvetica,sans-serif}
 <div class="date"><span id="day">--</span> <small id="month">---</small></div>
 <div class="day" id="weekday">---</div>
 <div class="digital" id="clock">00:00:00</div>
+<div class="ist">Indian Standard Time</div>
 <div class="clockMsg"><strong id="proverb">A GOOD DAY BEGINS WITH A GOOD THOUGHT.</strong></div>
 <div class="aticker"><div class="track"><span>» PUDUCHERRY • DIGITAL TIME • DATE • LIVE »</span><span>» PUDUCHERRY • DIGITAL TIME • DATE • LIVE »</span></div></div>
 </section>
@@ -127,8 +161,8 @@ body{font-family:Arial,Helvetica,sans-serif}
   <div class="rule"><b>05</b> DON'T LITTER</div>
 </div>
 
-
 <div class="aticker"><div class="track">
+<span class="tickerColor">» KEEP PUDUCHERRY CLEAN • USE DUSTBIN • DRIVE SAFE »</span>
 <span class="tickerColor">» KEEP PUDUCHERRY CLEAN • USE DUSTBIN • DRIVE SAFE »</span>
 </div></div>
 </section>
@@ -172,7 +206,7 @@ async function loadWeather(){
 function updateClock(){
  const n=new Date();
  const opt={timeZone:'Asia/Kolkata'};
- document.getElementById('clock').textContent=n.toLocaleTimeString('en-GB',{...opt,hour:'2-digit',minute:'2-digit',hour12:false});
+ document.getElementById('clock').textContent=n.toLocaleTimeString('en-GB',{...opt,hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
  document.getElementById('day').textContent=n.toLocaleDateString('en-GB',{...opt,day:'2-digit'});
  document.getElementById('month').textContent=n.toLocaleDateString('en-GB',{...opt,month:'short'}).toUpperCase();
  document.getElementById('weekday').textContent=n.toLocaleDateString('en-GB',{...opt,weekday:'long'}).toUpperCase();
