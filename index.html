@@ -55,24 +55,6 @@ html[lang="ta"] .place-item .ptag{font-size:3.3px}
 
 .ticker{position:absolute;bottom:0;left:0;width:96px;height:15px;overflow:hidden;z-index:10;background:rgba(3,11,3,.94);border-top:1px solid rgba(185,255,65,.28)}.awareness .ticker{background:rgba(22,15,1,.94);border-color:rgba(255,202,57,.3)}.ticker-track{display:flex;width:max-content;height:15px;will-change:transform;animation:ticker 15s linear infinite}.ticker-copy{display:block;flex:0 0 auto;padding-right:24px;font-size:4px;line-height:15px;font-weight:bold;letter-spacing:.08px;white-space:nowrap;color:#caff54;text-shadow:0 0 4px currentColor}@keyframes ticker{to{transform:translateX(-50%)}}.ticker-track:hover{animation-play-state:paused}
 @media (prefers-reduced-motion:reduce){.page,.page:before,.page.is-active .intro,.page.is-active .intro-left,.page.is-active .intro-pop,.weather-icon,.aw-icon,.ticker-track,.dot{animation:none;transition:none}.intro,.page.is-active .intro{opacity:1}}
-/* --- Live cyclone pages: separate English and Tamil screens --- */
-.cyclone{background:radial-gradient(circle at 50% 28%,#641a1a 0,#260909 48%,#050000 84%)}
-.cyclone .sub{color:#ffd0a6}
-.cyclone-alert{position:absolute;top:31px;left:7px;width:82px;text-align:center;padding:3px 2px;border:1px solid #ff6b4a;background:rgba(91,12,12,.9);color:#fff;font-size:4.2px;line-height:5px;font-weight:900;letter-spacing:.2px}
-.cyclone-name{position:absolute;top:48px;left:3px;width:90px;text-align:center;color:#ffe28a;font-size:13px;line-height:15px;font-weight:900;text-shadow:0 0 8px #ff4d2d}
-.cyclone-type{position:absolute;top:65px;left:4px;width:88px;text-align:center;color:#ffd2b5;font-size:4.3px;line-height:5px;font-weight:bold}
-.cyclone-landfall{position:absolute;top:78px;left:5px;width:86px;min-height:31px;padding:3px 2px;border:1px solid rgba(255,166,100,.65);background:rgba(35,7,7,.92);text-align:center;color:#fff;font-size:4.6px;line-height:6px;font-weight:bold}
-.cyclone-landfall b{display:block;color:#ffd45a;font-size:4px;line-height:5px;margin-bottom:1px}
-.cyclone-time{position:absolute;top:112px;left:5px;width:86px;min-height:18px;text-align:center;color:#ffc5a8;font-size:3.7px;line-height:5px}
-.cyclone-status{position:absolute;top:132px;left:5px;width:86px;min-height:10px;text-align:center;color:#ffe478;font-size:3.7px;line-height:5px;font-weight:bold}
-.cyclone-link{position:absolute;top:149px;left:5px;width:86px;text-align:center;color:#9feaff;font-size:3.8px;line-height:5px;font-weight:bold;text-decoration:underline}
-.cyclone .ticker{background:rgba(35,3,3,.96);border-color:rgba(255,115,75,.5)}.cyclone .ticker-copy{color:#ffd6b5}
-html[lang="ta"] .cyclone{font-family:"Noto Sans Tamil","Latha",Arial,sans-serif}
-html[lang="ta"] .cyclone .title{font-size:5px;letter-spacing:0}
-html[lang="ta"] .cyclone .sub{font-size:3.5px;letter-spacing:0}
-html[lang="ta"] .cyclone-landfall{font-size:4.2px;line-height:5.5px}
-html[lang="ta"] .cyclone-time{font-size:3.5px}
-/* --- end live cyclone pages --- */
 </style>
 </head>
 <body>
@@ -118,24 +100,6 @@ html[lang="ta"] .cyclone-time{font-size:3.5px}
   <div class="places-list-wrap intro" style="--d:180ms"><div class="places-track" id="placesTrack"></div></div>
   <div class="ticker"><div class="ticker-track"><span class="ticker-copy">» EXPLORE PUDUCHERRY • FRENCH QUARTER • HERITAGE WALKS • BEACHES</span><span class="ticker-copy" aria-hidden="true">» EXPLORE PUDUCHERRY • FRENCH QUARTER • HERITAGE WALKS • BEACHES</span></div></div>
  </section>
- <section class="page cyclone" data-page="cyclone-en">
-  <div class="title intro" style="--d:50ms">CYCLONE ALERT</div><div class="sub intro" style="--d:110ms">TAMIL NADU • PUDUCHERRY</div>
-  <div class="cyclone-alert intro-pop" style="--d:160ms">LIVE IMD BULLETIN</div><div class="cyclone-name intro-pop" style="--d:220ms" id="cyNameEn">LOADING</div>
-  <div class="cyclone-type intro" style="--d:280ms" id="cyTypeEn">CONNECTING TO IMD</div>
-  <div class="cyclone-landfall intro" style="--d:340ms"><b>EXPECTED LANDFALL</b><span id="cyAreaEn">Fetching official bulletin…</span></div>
-  <div class="cyclone-time intro" style="--d:400ms" id="cyTimeEn">Checking latest bulletin</div><div class="cyclone-status" id="cyStatusEn">CONNECTING TO IMD</div>
-  <a class="cyclone-link" href="https://mausam.imd.gov.in/responsive/cycloneinformation.php" target="_blank" rel="noopener">OPEN IMD CYCLONE UPDATES ↗</a>
-  <div class="ticker"><div class="ticker-track"><span class="ticker-copy" id="cyTickerEn">» LIVE CYCLONE INFORMATION • INDIA METEOROLOGICAL DEPARTMENT</span><span class="ticker-copy" aria-hidden="true" id="cyTickerEn2">» LIVE CYCLONE INFORMATION • INDIA METEOROLOGICAL DEPARTMENT</span></div></div>
- </section>
- <section class="page cyclone" data-page="cyclone-ta">
-  <div class="title intro" style="--d:50ms">புயல் எச்சரிக்கை</div><div class="sub intro" style="--d:110ms">தமிழ்நாடு • புதுச்சேரி</div>
-  <div class="cyclone-alert intro-pop" style="--d:160ms">IMD நேரலை அறிவிப்பு</div><div class="cyclone-name intro-pop" style="--d:220ms" id="cyNameTa">ஏற்றுகிறது</div>
-  <div class="cyclone-type intro" style="--d:280ms" id="cyTypeTa">IMD-யை இணைக்கிறது</div>
-  <div class="cyclone-landfall intro" style="--d:340ms"><b>எதிர்பார்க்கும் கரை கடத்தல்</b><span id="cyAreaTa">அதிகாரப்பூர்வ அறிவிப்பைப் பெறுகிறது…</span></div>
-  <div class="cyclone-time intro" style="--d:400ms" id="cyTimeTa">சமீபத்திய அறிவிப்பைச் சரிபார்க்கிறது</div><div class="cyclone-status" id="cyStatusTa">IMD-யை இணைக்கிறது</div>
-  <a class="cyclone-link" href="https://mausam.imd.gov.in/responsive/cycloneinformation.php" target="_blank" rel="noopener">IMD புயல் அறிவிப்புகள் ↗</a>
-  <div class="ticker"><div class="ticker-track"><span class="ticker-copy" id="cyTickerTa">» IMD நேரலை புயல் தகவல் • இந்திய வானிலை ஆய்வு மையம்</span><span class="ticker-copy" aria-hidden="true" id="cyTickerTa2">» IMD நேரலை புயல் தகவல் • இந்திய வானிலை ஆய்வு மையம்</span></div></div>
- </section>
 </main>
 <script>
 const API='https://api.open-meteo.com/v1/forecast?latitude=11.94&longitude=79.81&current=temperature_2m,relative_humidity_2m,wind_speed_10m,apparent_temperature,weather_code&timezone=Asia%2FKolkata';
@@ -180,44 +144,7 @@ const proverbs=['A GOOD DAY BEGINS WITH A GOOD THOUGHT.','SMALL STEPS LEAD TO BI
 const places=[['Sri Aurobindo Ashram','Spiritual heart of the city'],['Promenade Beach','Rocky shore & Gandhi statue'],['Auroville','Universal township & Matrimandir'],['French War Memorial','Colonial-era landmark'],['Sacred Heart Basilica','Gothic twin-spire church'],['Bharathi Park','Green square in White Town'],['Puducherry Museum','French colonial artefacts'],['Botanical Garden','Century-old tree collection'],['Serenity Beach','Surf & quiet golden sands'],['Paradise Beach','Boat-ride island beach']];
 (function buildPlaces(){const track=$('placesTrack');const html=places.map(p=>'<div class="place-item"><div class="pname">'+p[0]+'</div><div class="ptag">'+p[1]+'</div></div>').join('');track.innerHTML=html+html})();
 const pages=[...document.querySelectorAll('.page')];let pageIndex=0,flipping=false;function flip(){if(flipping)return;flipping=true;const outgoing=pages[pageIndex],next=pages[pageIndex=(pageIndex+1)%pages.length];outgoing.classList.remove('is-active');outgoing.classList.add('is-leaving');next.classList.remove('is-leaving');void next.offsetWidth;next.classList.add('is-active');setTimeout(()=>{outgoing.classList.remove('is-leaving');flipping=false},950)}
-function setCycloneStatus(en,ta){$('cyStatusEn').textContent=en;$('cyStatusTa').textContent=ta;}
-function toCycloneClock(v){v=('0000'+v).slice(-4);var h=Number(v.slice(0,2)),m=v.slice(2),ampm=h>=12?'PM':'AM';h=h%12||12;return h+':'+m+' '+ampm;}
-function setCycloneStatus(en,ta){$('cyStatusEn').textContent=en;$('cyStatusTa').textContent=ta;}
-function loadCycloneBulletin(){
- var target='https://mausam.imd.gov.in/Forecast/coastal_bulletin_new.php?id=6';
- var request=new XMLHttpRequest();request.open('GET','https://proxy.cors.dev/'+target+'&_='+new Date().getTime(),true);request.timeout=20000;
- request.onreadystatechange=function(){if(request.readyState!==4)return;if(request.status<200||request.status>=300){setCycloneStatus('IMD UPDATE UNAVAILABLE','IMD புதுப்பிப்பு கிடைக்கவில்லை');return;}
-  try{
-   var parsed=new DOMParser().parseFromString(request.responseText,'text/html');
-   var bodyText=parsed.body?parsed.body.textContent:request.responseText;
-   var rows=parsed.getElementsByTagName('tr'),synoptic='';
-   for(var i=0;i<rows.length;i++){var cells=rows[i].getElementsByTagName('td');if(cells.length>1&&/synoptic situation/i.test(cells[0].textContent)){synoptic=cells[1].textContent;break;}}
-   if(!synoptic)throw new Error('IMD bulletin text not found');   var nameMatch=synoptic.match(/\[PRONUNCIATION:\s*([a-z][a-z-]+)/i)||synoptic.match(/cyclonic storm\s*[“”"']\s*([a-z][a-z-]+)/i);
-   var stormName=nameMatch?nameMatch[1].toUpperCase():'NO NAMED CYCLONE';
-   var typeMatch=synoptic.match(/(super cyclonic storm|extremely severe cyclonic storm|very severe cyclonic storm|severe cyclonic storm|deep depression|cyclonic storm|depression)/i);
-   var stormType=typeMatch?typeMatch[1].toUpperCase():'CYCLONE BULLETIN';
-   var area='No landfall forecast stated';
-   var land=synoptic.match(/between\s+([a-z -]+?)\s+and\s+([a-z -]+?)(?:,|\s+close to|\s+during)/i);
-   if(land){area=land[1].trim()+' – '+land[2].trim();var near=synoptic.match(/close to\s+([a-z -]+?)(?:\s+during|,|\.)/i);if(near)area+=' • Near '+near[1].trim();}
-   else{var cross=synoptic.match(/cross(?:ing)?\s+(.{0,100}?coast)/i);if(cross)area=cross[1].replace(/\s+/g,' ').trim();}
-   var timing='See latest IMD bulletin';var clockTimes=synoptic.match(/\((\d{3,4})\s*HRS IST\)[\s\S]{0,180}?\((\d{3,4})\s*HRS IST\)/i);if(clockTimes)timing=toCycloneClock(clockTimes[1])+' – '+toCycloneClock(clockTimes[2])+' IST';
-   var issue='IMD bulletin refreshed '+new Date().toLocaleTimeString('en-IN',{timeZone:'Asia/Kolkata',hour:'2-digit',minute:'2-digit'});
-   var issueMatch=bodyText.match(/Time of Issue\s*([0-2]?[0-9]:[0-5][0-9])\s*IST\s+of\s+(\d{4}-\d{2}-\d{2})/i);
-   if(issueMatch)issue='IMD issue '+issueMatch[1]+' IST • '+issueMatch[2];
-   $('cyNameEn').textContent=stormName;$('cyNameTa').textContent=stormName==='NO NAMED CYCLONE'?'பெயரிடப்பட்ட புயல் இல்லை':stormName==='MURASU'?'முரசு':stormName;
-   $('cyTypeEn').textContent=stormType;$('cyTypeTa').textContent=stormType==='SEVERE CYCLONIC STORM'?'தீவிர புயல்':stormType==='VERY SEVERE CYCLONIC STORM'?'மிகத் தீவிர புயல்':stormType==='EXTREMELY SEVERE CYCLONIC STORM'?'மிகவும் தீவிர புயல்':stormType==='CYCLONIC STORM'?'புயல்':stormType==='DEEP DEPRESSION'?'ஆழ்ந்த காற்றழுத்த தாழ்வு மண்டலம்':stormType==='DEPRESSION'?'காற்றழுத்த தாழ்வு மண்டலம்':stormType;
-   var areaTa=area.replace(/Nellore/gi,'நெல்லூர்').replace(/Narsapur/gi,'நரசாபுரம்').replace(/Ongole/gi,'ஓங்கோல்').replace(/Andhra Pradesh/gi,'ஆந்திரப் பிரதேசம்').replace(/Near/gi,'அருகில்');
-   $('cyAreaEn').textContent=area;$('cyAreaTa').textContent=area==='No landfall forecast stated'?'கரை கடத்தல் கணிப்பு இல்லை':areaTa;
-   $('cyTimeEn').textContent='Landfall window: '+timing+' • '+issue;$('cyTimeTa').textContent='கரை கடக்கும் நேரம்: '+timing+' • IMD '+(issueMatch?issueMatch[1]+' IST':'புதுப்பிப்பு');
-   var tickerEn='» '+stormName+' • '+area+' • '+stormType+' • '+issue;$('cyTickerEn').textContent=tickerEn;$('cyTickerEn2').textContent=tickerEn;
-   var tickerTa='» '+$('cyNameTa').textContent+' • '+$('cyAreaTa').textContent+' • '+$('cyTypeTa').textContent+' • '+$('cyTimeTa').textContent;$('cyTickerTa').textContent=tickerTa;$('cyTickerTa2').textContent=tickerTa;
-   if(issueMatch){var issuedAt=Date.parse(issueMatch[2]+'T'+issueMatch[1]+':00+05:30');if(!isNaN(issuedAt)&&new Date().getTime()-issuedAt>12*60*60*1000)setCycloneStatus('IMD BULLETIN OLD • VERIFY','IMD அறிவிப்பு பழையது • சரிபார்க்கவும்');else setCycloneStatus('LIVE • IMD BULLETIN UPDATED','நேரலை • IMD அறிவிப்பு புதுப்பிக்கப்பட்டது');}else setCycloneStatus('LIVE • IMD BULLETIN UPDATED','நேரலை • IMD அறிவிப்பு புதுப்பிக்கப்பட்டது');
-  }catch(error){console.error('Cyclone bulletin parse failed:',error);setCycloneStatus('IMD BULLETIN FORMAT ERROR','IMD அறிவிப்பைப் படிக்க முடியவில்லை');}
- };
- request.onerror=function(){setCycloneStatus('IMD CONNECTION FAILED','IMD இணைப்பு தோல்வியடைந்தது');};request.ontimeout=function(){setCycloneStatus('IMD CONNECTION TIMED OUT','IMD இணைப்பு நேரம் முடிந்தது');};
- try{request.send();}catch(error){setCycloneStatus('IMD CONNECTION FAILED','IMD இணைப்பு தோல்வியடைந்தது');}
-}
-loadWeather();updateClock();updateAwareness();updateProverb();loadCycloneBulletin();setInterval(loadWeather,60000);setInterval(loadCycloneBulletin,300000);setInterval(updateClock,1000);setInterval(updateAwareness,5000);setInterval(updateProverb,5000);setInterval(flip,14000);
+loadWeather();updateClock();updateAwareness();updateProverb();setInterval(loadWeather,60000);setInterval(updateClock,1000);setInterval(updateAwareness,5000);setInterval(updateProverb,5000);setInterval(flip,14000);
 </script>
 </body>
 </html>
