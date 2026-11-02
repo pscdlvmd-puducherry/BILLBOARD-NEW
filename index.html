@@ -60,7 +60,7 @@ html[lang="ta"] .place-item .ptag{font-size:3.3px}
 <body>
 <main id="billboard" aria-label="Puducherry Smart Billboard">
  <section class="page weather is-active" data-page="weather">
-  <div class="title intro" style="--d:50ms">PUDUCHERRY WEATHER</div><div class="live intro-left" style="--d:120ms"><i class="dot"></i> LIVE</div><div class="divider intro" style="--d:100ms"></div>
+  <div class="title intro" style="--d:50ms">PUDUCHERRY WEATHER</div><div class="live intro-left" style="--d:120ms"><i class="dot"></i> <span id="weatherStatus">CONNECTING</span></div><div class="divider intro" style="--d:100ms"></div>
   <div class="temperature intro-pop" style="--d:170ms"><span id="temp">--</span><small>°C</small></div><div class="weather-icon-wrap intro" style="--d:260ms"><span class="weather-icon" id="icon">⛅</span></div><div class="description intro" style="--d:330ms" id="desc">LOADING WEATHER</div>
   <div class="cards"><div class="card intro-left" style="--d:390ms"><b>◇</b><label>HUMIDITY</label><strong id="hum">--</strong><em>%</em></div><div class="card intro-left" style="--d:450ms"><b>≋</b><label>WIND SPEED</label><strong id="wind">--</strong><em>km/h</em></div><div class="card intro-left" style="--d:510ms"><b>♨</b><label>FEELS LIKE</label><strong id="feels">--</strong><em>°C</em></div></div>
   <div class="ticker"><div class="ticker-track" id="weatherTicker"><span class="ticker-copy" id="wt1">» PUDUCHERRY WEATHER • UPDATING</span><span class="ticker-copy" id="wt2" aria-hidden="true">» PUDUCHERRY WEATHER • UPDATING</span></div></div>
@@ -106,7 +106,37 @@ const API='https://api.open-meteo.com/v1/forecast?latitude=11.94&longitude=79.81
 const $=id=>document.getElementById(id);
 document.getElementById('billboard').classList.add('sky');
 function weatherText(code){if(code===0)return['CLEAR SKY','☀️'];if(code<=2)return['PARTLY CLOUDY','⛅'];if(code===3)return['CLOUDY','☁️'];if(code<=48)return['FOG','🌫️'];if(code<=57)return['DRIZZLE','🌦️'];if(code<=67)return['RAIN','🌧️'];if(code<=82)return['SHOWERS','🌦️'];return['THUNDERSTORM','⛈️']}
-async function loadWeather(){try{const response=await fetch(API+'&_='+Date.now(),{cache:'no-store'});if(!response.ok)throw Error('Weather unavailable');const current=(await response.json()).current;const [label,emoji]=weatherText(current.weather_code);const t=Math.round(current.temperature_2m),h=Math.round(current.relative_humidity_2m),wind=Math.round(current.wind_speed_10m),feels=Math.round(current.apparent_temperature);$('temp').textContent=t;$('hum').textContent=h;$('wind').textContent=wind;$('feels').textContent=feels;$('desc').textContent=label;$('icon').textContent=emoji;const ticker='» PUDUCHERRY WEATHER • '+t+'°C • '+label+' • HUM '+h+'% • WIND '+wind+' km/h';$('wt1').textContent=ticker;$('wt2').textContent=ticker}catch(error){$('desc').textContent='WEATHER DATA OFFLINE'}}
+var lastWeatherSuccess=0;
+function loadWeather(){
+ var status=$('weatherStatus');
+ var request=new XMLHttpRequest();
+ request.open('GET',API+'&_='+new Date().getTime(),true);
+ request.timeout=15000;
+ request.onreadystatechange=function(){
+  if(request.readyState!==4)return;
+  if(request.status<200||request.status>=300){weatherFailed('Weather service HTTP '+request.status);return;}
+  try{
+   var payload=JSON.parse(request.responseText);
+   var current=payload&&payload.current;
+   var fields=['temperature_2m','relative_humidity_2m','wind_speed_10m','apparent_temperature','weather_code'];
+   if(!current||fields.some(function(k){return current[k]===null||current[k]===undefined||!isFinite(Number(current[k]));}))throw new Error('Weather response has no current readings');
+   var code=Number(current.weather_code),weather=weatherText(code);
+   var t=Math.round(Number(current.temperature_2m)),h=Math.round(Number(current.relative_humidity_2m)),wind=Math.round(Number(current.wind_speed_10m)),feels=Math.round(Number(current.apparent_temperature));
+   $('temp').textContent=t;$('hum').textContent=h;$('wind').textContent=wind;$('feels').textContent=feels;$('desc').textContent=weather[0];$('icon').textContent=weather[1];
+   var ticker='» PUDUCHERRY WEATHER • '+t+'°C • '+weather[0]+' • HUM '+h+'% • WIND '+wind+' km/h';$('wt1').textContent=ticker;$('wt2').textContent=ticker;
+   lastWeatherSuccess=new Date().getTime();status.textContent='LIVE';status.title='Updated '+new Date(lastWeatherSuccess).toLocaleTimeString('en-IN',{timeZone:'Asia/Kolkata'});
+  }catch(error){weatherFailed(error.message||'Invalid weather response');}
+ };
+ request.onerror=function(){weatherFailed('Network/CORS error. Check internet access on the billboard player.');};
+ request.ontimeout=function(){weatherFailed('Weather request timed out. Check internet access.');};
+ try{request.send();}catch(error){weatherFailed('Could not connect to weather service.');}
+}
+function weatherFailed(message){
+ console.error('Weather update failed: '+message);
+ var status=$('weatherStatus');
+ if(lastWeatherSuccess){status.textContent='STALE';status.title=message+' Last update: '+new Date(lastWeatherSuccess).toLocaleTimeString('en-IN',{timeZone:'Asia/Kolkata'});$('desc').textContent='SHOWING LAST UPDATE';}
+ else{status.textContent='OFFLINE';status.title=message;$('desc').textContent='CHECK INTERNET CONNECTION';}
+}
 function updateClock(){const now=new Date(),opt={timeZone:'Asia/Kolkata'};$('clock').textContent=now.toLocaleTimeString('en-GB',{...opt,hour:'2-digit',minute:'2-digit',hour12:false});$('day').textContent=now.toLocaleDateString('en-GB',{...opt,day:'2-digit'});$('month').textContent=now.toLocaleDateString('en-GB',{...opt,month:'short'}).toUpperCase();$('weekday').textContent=now.toLocaleDateString('en-GB',{...opt,weekday:'long'}).toUpperCase()}
 const awareness=[['TRAFFIC SAFETY','FOLLOW TRAFFIC RULES'],['SAFETY FIRST','WEAR HELMET / SEAT BELT'],['PEDESTRIAN SAFETY','USE ZEBRA CROSSING'],['DRIVE RESPONSIBLY',"DON'T USE PHONE WHILE DRIVING"],['KEEP PUDUCHERRY CLEAN','USE DUSTBIN • DO NOT LITTER'],['CLEAN TOURIST PLACES','KEEP OUR CITY CLEAN']];let ai=0;
 function updateAwareness(){const a=awareness[ai++%awareness.length];$('awTitle').textContent=a[0];$('awMessage').textContent=a[1]}
@@ -114,7 +144,7 @@ const proverbs=['A GOOD DAY BEGINS WITH A GOOD THOUGHT.','SMALL STEPS LEAD TO BI
 const places=[['Sri Aurobindo Ashram','Spiritual heart of the city'],['Promenade Beach','Rocky shore & Gandhi statue'],['Auroville','Universal township & Matrimandir'],['French War Memorial','Colonial-era landmark'],['Sacred Heart Basilica','Gothic twin-spire church'],['Bharathi Park','Green square in White Town'],['Puducherry Museum','French colonial artefacts'],['Botanical Garden','Century-old tree collection'],['Serenity Beach','Surf & quiet golden sands'],['Paradise Beach','Boat-ride island beach']];
 (function buildPlaces(){const track=$('placesTrack');const html=places.map(p=>'<div class="place-item"><div class="pname">'+p[0]+'</div><div class="ptag">'+p[1]+'</div></div>').join('');track.innerHTML=html+html})();
 const pages=[...document.querySelectorAll('.page')];let pageIndex=0,flipping=false;function flip(){if(flipping)return;flipping=true;const outgoing=pages[pageIndex],next=pages[pageIndex=(pageIndex+1)%pages.length];outgoing.classList.remove('is-active');outgoing.classList.add('is-leaving');next.classList.remove('is-leaving');void next.offsetWidth;next.classList.add('is-active');setTimeout(()=>{outgoing.classList.remove('is-leaving');flipping=false},950)}
-loadWeather();updateClock();updateAwareness();updateProverb();setInterval(loadWeather,600000);setInterval(updateClock,1000);setInterval(updateAwareness,5000);setInterval(updateProverb,5000);setInterval(flip,14000);
+loadWeather();updateClock();updateAwareness();updateProverb();setInterval(loadWeather,60000);setInterval(updateClock,1000);setInterval(updateAwareness,5000);setInterval(updateProverb,5000);setInterval(flip,14000);
 </script>
 </body>
 </html>
