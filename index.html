@@ -36,13 +36,14 @@ html[lang="ta"] .aw-message{font-size:4.9px;line-height:6.6px}
 /* --- end awareness page rules --- */
 
 /* --- Places to visit page (page 4): pixel-art monuments background + vertical scroll list --- */
-.places{background:#050d18}
+.places{background:linear-gradient(180deg,#11b8ec 0%,#ffe47a 44%,#03a9ba 70%,#ec7c43 100%)}
 .places .pixel-bg{position:absolute;inset:0;z-index:0;width:100%;height:100%}
-.places .pixel-bg svg{width:100%;height:100%;display:block}
-.places .places-overlay{position:absolute;inset:0;z-index:0;pointer-events:none;background:linear-gradient(180deg,rgba(3,10,22,.25) 0%,rgba(3,10,22,.55) 55%,rgba(3,10,22,.88) 100%)}
+.places .pixel-bg svg{width:100%;height:100%;display:block}.places .pixel-bg{filter:saturate(1.45) brightness(1.18)}
+.places .places-overlay{position:absolute;inset:0;z-index:0;pointer-events:none;background:linear-gradient(180deg,rgba(4,18,40,.04) 0%,rgba(7,30,50,.14) 45%,rgba(8,25,34,.66) 100%)}
 .places .title{text-shadow:0 1px 2px #000,0 0 6px rgba(255,196,63,.5)}
-.places .sub{color:#ffd45a}
+.places .sub{color:#fff7d1;text-shadow:0 1px 3px #132544}.places .place-item{background:rgba(4,22,44,.48);border-bottom-color:rgba(255,220,94,.55)}.places .place-item .pname{color:#fff5a8;text-shadow:0 1px 3px #101b2c,0 0 5px #ff7a00}.places .place-item .ptag{color:#c7f6ff}
 .places-list-wrap{position:absolute;top:27px;bottom:15px;left:5px;width:86px;overflow:hidden;-webkit-mask-image:linear-gradient(180deg,transparent 0,#000 10%,#000 88%,transparent 100%);mask-image:linear-gradient(180deg,transparent 0,#000 10%,#000 88%,transparent 100%)}
+.places-banner{position:absolute;top:4px;left:4px;width:88px;height:22px;border:1px solid rgba(255,255,255,.75);border-radius:3px;background:linear-gradient(110deg,#ffbd00 0%,#ff5a5f 48%,#00b9e8 100%);box-shadow:0 0 10px rgba(255,186,0,.75),inset 0 0 8px rgba(255,255,255,.22);z-index:1}.places .places-list-wrap{top:27px}
 .places-track{display:flex;flex-direction:column;animation:placesScroll 24s linear infinite}
 .place-item{padding:3px 2px;text-align:center;border-bottom:1px solid rgba(255,212,90,.16)}
 .place-item .pname{font-size:5.6px;font-weight:900;letter-spacing:.2px;color:#ffe9a8;text-shadow:0 0 4px #000,0 0 5px rgba(255,180,0,.7)}
@@ -76,11 +77,12 @@ html[lang="ta"] .place-item .ptag{font-size:3.3px}
   <div class="ticker"><div class="ticker-track"><span class="ticker-copy">» KEEP PUDUCHERRY CLEAN • USE DUSTBIN • DRIVE SAFE</span><span class="ticker-copy" aria-hidden="true">» KEEP PUDUCHERRY CLEAN • USE DUSTBIN • DRIVE SAFE</span></div></div>
  </section>
  <section class="page places" data-page="places">
+  <div class="places-banner" aria-hidden="true"></div>
   <div class="pixel-bg" aria-hidden="true">
    <svg viewBox="0 0 48 96" shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg">
     <defs>
-     <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#0a1a33"/><stop offset="55%" stop-color="#14314f"/><stop offset="100%" stop-color="#3a5a72"/></linearGradient>
-     <linearGradient id="seaGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#123a52"/><stop offset="100%" stop-color="#0a2436"/></linearGradient>
+     <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#00baff"/><stop offset="55%" stop-color="#35d4ef"/><stop offset="100%" stop-color="#ffd166"/></linearGradient>
+     <linearGradient id="seaGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#00c9c8"/><stop offset="100%" stop-color="#087eaa"/></linearGradient>
     </defs>
     <rect x="0" y="0" width="48" height="66" fill="url(#skyGrad)"/>
     <circle cx="8" cy="12" r="3" fill="#ffe9a8" opacity=".85"/>
@@ -102,34 +104,49 @@ html[lang="ta"] .place-item .ptag{font-size:3.3px}
  </section>
 </main>
 <script>
-const API='https://api.open-meteo.com/v1/forecast?latitude=11.94&longitude=79.81&current=temperature_2m,relative_humidity_2m,wind_speed_10m,apparent_temperature,weather_code&timezone=Asia%2FKolkata';
+// Primary source: wttr.in. Open-Meteo is used automatically if that source is blocked.
+const WEATHER_URLS=[
+ 'https://wttr.in/Puducherry?format=j1',
+ 'https://api.open-meteo.com/v1/forecast?latitude=11.94&longitude=79.81&current=temperature_2m,relative_humidity_2m,wind_speed_10m,apparent_temperature,weather_code&timezone=Asia%2FKolkata'
+];
 const $=id=>document.getElementById(id);
 document.getElementById('billboard').classList.add('sky');
 function weatherText(code){if(code===0)return['CLEAR SKY','☀️'];if(code<=2)return['PARTLY CLOUDY','⛅'];if(code===3)return['CLOUDY','☁️'];if(code<=48)return['FOG','🌫️'];if(code<=57)return['DRIZZLE','🌦️'];if(code<=67)return['RAIN','🌧️'];if(code<=82)return['SHOWERS','🌦️'];return['THUNDERSTORM','⛈️']}
 var lastWeatherSuccess=0;
 function loadWeather(){
- var status=$('weatherStatus');
- var request=new XMLHttpRequest();
- request.open('GET',API+'&_='+new Date().getTime(),true);
- request.timeout=15000;
- request.onreadystatechange=function(){
-  if(request.readyState!==4)return;
-  if(request.status<200||request.status>=300){weatherFailed('Weather service HTTP '+request.status);return;}
-  try{
-   var payload=JSON.parse(request.responseText);
-   var current=payload&&payload.current;
-   var fields=['temperature_2m','relative_humidity_2m','wind_speed_10m','apparent_temperature','weather_code'];
-   if(!current||fields.some(function(k){return current[k]===null||current[k]===undefined||!isFinite(Number(current[k]));}))throw new Error('Weather response has no current readings');
-   var code=Number(current.weather_code),weather=weatherText(code);
-   var t=Math.round(Number(current.temperature_2m)),h=Math.round(Number(current.relative_humidity_2m)),wind=Math.round(Number(current.wind_speed_10m)),feels=Math.round(Number(current.apparent_temperature));
-   $('temp').textContent=t;$('hum').textContent=h;$('wind').textContent=wind;$('feels').textContent=feels;$('desc').textContent=weather[0];$('icon').textContent=weather[1];
-   var ticker='» PUDUCHERRY WEATHER • '+t+'°C • '+weather[0]+' • HUM '+h+'% • WIND '+wind+' km/h';$('wt1').textContent=ticker;$('wt2').textContent=ticker;
-   lastWeatherSuccess=new Date().getTime();status.textContent='LIVE';status.title='Updated '+new Date(lastWeatherSuccess).toLocaleTimeString('en-IN',{timeZone:'Asia/Kolkata'});
-  }catch(error){weatherFailed(error.message||'Invalid weather response');}
- };
- request.onerror=function(){weatherFailed('Network/CORS error. Check internet access on the billboard player.');};
- request.ontimeout=function(){weatherFailed('Weather request timed out. Check internet access.');};
- try{request.send();}catch(error){weatherFailed('Could not connect to weather service.');}
+ var status=$('weatherStatus');status.textContent='UPDATING';
+ function requestSource(index){
+  if(index>=WEATHER_URLS.length){weatherFailed('Both weather sources are unavailable. Check the device internet connection.');return}
+  var request=new XMLHttpRequest(),timer=setTimeout(function(){request.abort()},12000);
+  request.open('GET',WEATHER_URLS[index]+(WEATHER_URLS[index].includes('?')?'&':'?')+'_='+Date.now(),true);
+  request.onreadystatechange=function(){
+   if(request.readyState!==4)return;clearTimeout(timer);
+   if(request.status<200||request.status>=300){requestSource(index+1);return}
+   try{
+    var payload=JSON.parse(request.responseText),t,h,wind,feels,desc,icon;
+    if(index===0){
+     var current=payload&&payload.current_condition&&payload.current_condition[0];
+     if(!current)throw new Error('No current weather in response');
+     t=Number(current.temp_C);h=Number(current.humidity);wind=Number(current.windspeedKmph);feels=Number(current.FeelsLikeC);
+     desc=String(current.weatherDesc&&current.weatherDesc[0]&&current.weatherDesc[0].value||'CURRENT WEATHER').toUpperCase();
+     var d=desc.toLowerCase();icon=d.includes('thunder')?'⛈️':d.includes('rain')||d.includes('drizzle')?'🌧️':d.includes('fog')||d.includes('mist')?'🌫️':d.includes('snow')?'❄️':d.includes('cloud')?'☁️':'☀️';
+    }else{
+     var c=payload&&payload.current;if(!c)throw new Error('No current weather in response');
+     t=Number(c.temperature_2m);h=Number(c.relative_humidity_2m);wind=Number(c.wind_speed_10m);feels=Number(c.apparent_temperature);
+     var weather=weatherText(Number(c.weather_code));desc=weather[0];icon=weather[1];
+    }
+    if([t,h,wind,feels].some(function(v){return !isFinite(v)}))throw new Error('Weather readings are incomplete');
+    t=Math.round(t);h=Math.round(h);wind=Math.round(wind);feels=Math.round(feels);
+    $('temp').textContent=t;$('hum').textContent=h;$('wind').textContent=wind;$('feels').textContent=feels;$('desc').textContent=desc;$('icon').textContent=icon;
+    var ticker='» PUDUCHERRY WEATHER • '+t+'°C • '+desc+' • HUM '+h+'% • WIND '+wind+' km/h';$('wt1').textContent=ticker;$('wt2').textContent=ticker;
+    lastWeatherSuccess=Date.now();status.textContent='LIVE';status.title='Updated '+new Date(lastWeatherSuccess).toLocaleTimeString('en-IN',{timeZone:'Asia/Kolkata'});
+   }catch(error){requestSource(index+1)}
+  };
+  request.onerror=function(){clearTimeout(timer);requestSource(index+1)};
+  request.ontimeout=function(){clearTimeout(timer);requestSource(index+1)};
+  try{request.send()}catch(error){clearTimeout(timer);requestSource(index+1)}
+ }
+ requestSource(0);
 }
 function weatherFailed(message){
  console.error('Weather update failed: '+message);
@@ -148,4 +165,3 @@ loadWeather();updateClock();updateAwareness();updateProverb();setInterval(loadWe
 </script>
 </body>
 </html>
-
